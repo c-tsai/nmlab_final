@@ -1,6 +1,5 @@
 pragma solidity ^0.5.0;
 
-// Reference: https://github.com/pomelyu/EthereumTodo
 /*I design the DNA to have two strains(dna1, dna2 uint256), 
     The following is the representative of each gene (in LSB order)
         0 -> seed yellow (dominant), green(recessive) [mendilan trait]
@@ -79,7 +78,7 @@ contract SproutApp {
         uint8 
     }
 
-    function getTodoList() public view returns(uint[] memory, bool[] memory) {
+    /*function getTodoList() public view returns(uint[] memory, bool[] memory) {
         uint len;
         uint[] memory valids;
 
