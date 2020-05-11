@@ -1,5 +1,8 @@
 pragma solidity ^0.5.0;
 
+import "github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath.sol";
+import "github.com/OpenZeppelin/zeppelin-solidity/contracts/math/SafeMath8.sol";
+
 /*I design the DNA to have two strains(dna1, dna2 uint256), 
     The following is the representative of each gene (in LSB order)
         0 -> seed yellow (dominant), green(recessive) [mendilan trait]
@@ -15,9 +18,9 @@ pragma solidity ^0.5.0;
         output is uint8, represent the amount of 1 among the corresponding bits
         
 About Traits:
-     height(uint8): the full grown height of height gene=0 is 60 cm, gene=120 is 180 cm
-     width(uint8): the full grown width of width gene=0 is 5 cm, gene=120 is 20 cm
-     color(uint8): I guess I will directly return the gene(cause I don't really know how to present color with 1 dim...)
+     height(uint): the full grown height of height gene=0 is 60 cm, gene=120 is 180 cm
+     width(uint): the full grown width of width gene=0 is 5 mm, gene=120 is 20 mm
+     color(uint): I guess I will directly return the gene(cause I don't really know how to present color with 1 dim...)
      It take 2 days to reach full grown for speed gene=0, half day for speed gene = 190
      (though the actual game won't be that long because we'd like to plug it up before the sprout get too green and stiff)
      mendilan trait(bool): directly return the bool 
@@ -28,7 +31,7 @@ About Growing:
     3. the color I guess should be turning greener and greener (though I don't really know how to design this part) 
     4. all the growing before full grown is linear
     3. after full grown, it use 5% of the full grown time to die off, all the other feature would remain same in this period
-        (represent by another uint8 die_stage,)
+        (represent by another uint die_stage, det defaultly highest to 10)
 
 
 
@@ -45,6 +48,9 @@ Notes:
     
 */
 contract SproutApp {
+
+    using SafeMath for uint;
+    using SafeMath8 for uint8
 
     event OnTodoAdded(uint todoId);
     event OnTodoDeleted(uint todoId);
@@ -71,13 +77,13 @@ contract SproutApp {
     // Perhaps could be solved by storing data locally
     function getSproutLook(uint x_id, uint y_id) public view locationExist(x_id, y_id) 
     returns(bool sprout_stage, bool seed_yellow, bool seed_round, uint8 height, uint8 width, uint8 color, uint8 die_stage) {
-        uint8 color;
-        uint8 height;
-        uint8 width;
-        uint8 die_stage= 0;
-        uint8 height_gen= 0;
-        uint8 width_gen= 0;
-        uint8 speed_gen= 0;
+        uint color;
+        uint height;
+        uint width;
+        uint die_stage= 0;
+        uint height_gen= 0;
+        uint width_gen= 0;
+        uint speed_gen= 0;
         uint temp1 = sprout_list[x_id][y_id].dna1;
         uint temp2 = sprout_list[x_id][y_id].dna2;
 
@@ -109,8 +115,22 @@ contract SproutApp {
             temp1 = temp1 >> 1;temp2 = temp2 >> 1;
         }
 
-        //determine growing stage
-        uint fullgrown_time = 2 days - (1.5 * speed_gen/190) 
+        //determine growing stage and height width
+        uint fullgrown_time = (380.sub(speed_gen.mul(1.5)) days).div(190);
+        uint now_stage = now.sub(sprout_list[x_id][y_id].planttime);
+        if(now_stage > fullgrown_time) {
+            die_stage = (now_stage.sub(fullgrown_time)).mul(10).div(fullgrown_time);
+            height = (height_gen.mul(60).add(120)).div(height_gen);
+            width = (width_gen.mul(5).add(15)).div(width_gen);
+        }
+        else{
+            height = (height_gen.mul(60).add(120)).mul(fullgrown_time).div(height_gen).div(now_stage);
+            width = (width_gen.mul(5).add(15)).mul(fullgrown_time).div(width_gen).div(now_stage);
+        }
+        bool sprout_stage = (now_stage < fullgrown_time.div(10));
+
+
+        return (sprout_stage, seed_yellow, seed_round, height, width, color, die_stage)
 
     }
 
