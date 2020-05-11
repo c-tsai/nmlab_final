@@ -24,9 +24,9 @@ About Traits:
 
 About Growing:
     1. before the reaching 10% of full growth, the seed would shown, but slowly sinking into ground
-        (it's the perfect time to plug the sprout!)
-    2. the color I guess should be turning greener and greener (though I don't really know how to design this part) 
-    2. all the growing before full grown is linear
+        (it's the perfect time to plug the sprout!, giving true for sprout stage (bool))
+    3. the color I guess should be turning greener and greener (though I don't really know how to design this part) 
+    4. all the growing before full grown is linear
     3. after full grown, it use 5% of the full grown time to die off, all the other feature would remain same in this period
         (represent by another uint8 die_stage,)
 
@@ -60,7 +60,7 @@ contract SproutApp {
     }
     
     // I defined the whole list into a 2-dim array, which make intutiive correlation to physical location
-    Sprout[][] sprout_map;
+    Sprout[][] sprout_list;
 
     modifier locationExist(uint x_id, uint y_id){
         require(sprout_map[x_id][y_id].isset, "location does not exist");
@@ -68,14 +68,50 @@ contract SproutApp {
     }
 
     // the design for now is more tend to update continuouslly, the running speed might be a great concern
+    // Perhaps could be solved by storing data locally
     function getSproutLook(uint x_id, uint y_id) public view locationExist(x_id, y_id) 
-    returns(bool seed_yellow, bool seed_round, uint8 height, uint8 width, uint color) {
-        bool seed_yellow;
-        bool seed_round;
+    returns(bool sprout_stage, bool seed_yellow, bool seed_round, uint8 height, uint8 width, uint8 color, uint8 die_stage) {
         uint8 color;
         uint8 height;
         uint8 width;
-        uint8 
+        uint8 die_stage= 0;
+        uint8 height_gen= 0;
+        uint8 width_gen= 0;
+        uint8 speed_gen= 0;
+        uint temp1 = sprout_list[x_id][y_id].dna1;
+        uint temp2 = sprout_list[x_id][y_id].dna2;
+
+        //determine genes (mendilen traits)
+        bool seed_yellow = (((temp1%2) & (temp2%2)) == 1);
+        temp1 = temp1 >> 1;
+        temp2 = temp2 >> 1;
+        bool seed_round = (((temp1%2) & (temp2%2)) == 1);
+
+        //determine genes (polygene traits)
+        for (uint8 i =2; i <41; i++){
+            if (temp1%2 == 1){color++;}
+            if (temp2%2 == 1){color++;}
+            temp1 = temp1 >> 1;temp2 = temp2 >> 1;
+        }
+        for (uint8 i =41; i <101; i++){
+            if (temp1%2 == 1){width_gen++;}
+            if (temp2%2 == 1){width_gen++;}
+            temp1 = temp1 >> 1;temp2 = temp2 >> 1;
+        }
+        for (uint8 i =101; i <161; i++){
+            if (temp1%2 == 1){height_gen++;}
+            if (temp2%2 == 1){height_gen++;}
+            temp1 = temp1 >> 1;temp2 = temp2 >> 1;
+        }
+        for (uint8 i =160; i <255; i++){
+            if (temp1%2 == 1){speed_gen++;}
+            if (temp2%2 == 1){speed_gen++;}
+            temp1 = temp1 >> 1;temp2 = temp2 >> 1;
+        }
+
+        //determine growing stage
+        uint fullgrown_time = 2 days - (1.5 * speed_gen/190) 
+
     }
 
     /*function getTodoList() public view returns(uint[] memory, bool[] memory) {
