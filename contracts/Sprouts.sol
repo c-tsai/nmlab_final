@@ -136,7 +136,7 @@ contract SproutApp {
 
     }
 
-    function getAllid() public view returns(uint[] memory x, bool[] memory y) {
+    function getAllId() public view returns(uint[] memory x, bool[] memory y) {
 
         uint[] memory ids = new uint[](len);
         bool[] memory isCompletes = new bool[](len);
@@ -175,12 +175,12 @@ contract SproutApp {
 */
     // Private methods
     function _getSetSprouts() private view returns(uint length) {
-        uint[] memory validTodos = new uint[](todos.length);
         uint count = 0;
-        for (uint i = 0; i < todos.length; i++) {
-            if (isTodoValid(i)) {
-                validTodos[count] = i;
-                count++;
+        for (uint i = 0; i < 10; i++) {
+            for (uint j =0; j <10; j++){
+                if (sprout_list[i][j]) {
+                    count++;
+                 }
             }
         }
         return(validTodos, count);
