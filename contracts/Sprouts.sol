@@ -28,10 +28,11 @@ About Traits:
 About Growing:
     1. before the reaching 10% of full growth, the seed would shown, but slowly sinking into ground
         (it's the perfect time to plug the sprout!, giving true for sprout stage (bool))
-    3. the color I guess should be turning greener and greener (though I don't really know how to design this part) 
-    4. all the growing before full grown is linear
-    3. after full grown, it use 5% of the full grown time to die off, all the other feature would remain same in this period
+    2. the color I guess should be turning greener and greener (though I don't really know how to design this part) 
+    3. all the growing before full grown is linear
+    4. after full grown, it use 5% of the full grown time to die off, all the other feature would remain same in this period
         (represent by another uint die_stage, det defaultly highest to 10)
+    5. The bean can only be planted at (x, y) where 0 <= x <10, 0 <= y < 10
 
 
 
@@ -66,7 +67,7 @@ contract SproutApp {
     }
     
     // I defined the whole list into a 2-dim array, which make intutiive correlation to physical location
-    Sprout[][] sprout_list;
+    Sprout[10][10] sprout_list;//default len is 10
 
     modifier locationExist(uint x_id, uint y_id){
         require(sprout_map[x_id][y_id].isset, "location does not exist");
@@ -115,9 +116,11 @@ contract SproutApp {
             temp1 = temp1 >> 1;temp2 = temp2 >> 1;
         }
 
-        //determine growing stage and height width
+        //determine growing stage
         uint fullgrown_time = (380.sub(speed_gen.mul(1.5)) days).div(190);
         uint now_stage = now.sub(sprout_list[x_id][y_id].planttime);
+        bool sprout_stage = (now_stage < fullgrown_time.div(10));
+        //determine height width die_stage
         if(now_stage > fullgrown_time) {
             die_stage = (now_stage.sub(fullgrown_time)).mul(10).div(fullgrown_time);
             height = (height_gen.mul(60).add(120)).div(height_gen);
@@ -127,18 +130,13 @@ contract SproutApp {
             height = (height_gen.mul(60).add(120)).mul(fullgrown_time).div(height_gen).div(now_stage);
             width = (width_gen.mul(5).add(15)).mul(fullgrown_time).div(width_gen).div(now_stage);
         }
-        bool sprout_stage = (now_stage < fullgrown_time.div(10));
 
 
         return (sprout_stage, seed_yellow, seed_round, height, width, color, die_stage)
 
     }
 
-    /*function getTodoList() public view returns(uint[] memory, bool[] memory) {
-        uint len;
-        uint[] memory valids;
-
-        (valids, len) = _getValidTodos();
+    function getAllid() public view returns(uint[] memory x, bool[] memory y) {
 
         uint[] memory ids = new uint[](len);
         bool[] memory isCompletes = new bool[](len);
@@ -149,7 +147,7 @@ contract SproutApp {
         }
         return (ids, isCompletes);
     }
-
+/*
     function addTodo(string memory _taskName) public {
         Todo memory todo = Todo(_taskName, false, true);
         uint todoId = todos.push(todo) - 1;
