@@ -172,9 +172,9 @@ contract SproutApp {
 
         emit OnTodoUndone(_todoId);
     }
-
+*/
     // Private methods
-    function _getSetSprouts() private view returns(uint[] memory valids, uint length) {
+    function _getSetSprouts() private view returns(uint length) {
         uint[] memory validTodos = new uint[](todos.length);
         uint count = 0;
         for (uint i = 0; i < todos.length; i++) {
