@@ -53,30 +53,28 @@ contract SproutApp {
     using SafeMath for uint;
     using SafeMath8 for uint8
 
-    event OnTodoAdded(uint todoId);
-    event OnTodoDeleted(uint todoId);
-    event OnTodoCompleted(uint todoId);
-    event OnTodoUndone(uint todoId);
-
+    event OnAdd(address owner, uint x_id, uint y_id, uint dna1, uint dna2);
+    event OnPlug(address owner, uint x_id, uint y_id,;
     
     struct Sprout {
         uint dna1;
         uint dna2;
         uint planttime;
+        address owner;
         bool isset;
     }
     
     // I defined the whole list into a 2-dim array, which make intutiive correlation to physical location
-    Sprout[10][10] sprout_list;//default len is 10
+    mapping (address => Sprout[10][10]) sprout_list;//default len is 10
 
-    modifier locationExist(uint x_id, uint y_id){
-        require(sprout_map[x_id][y_id].isset, "location does not exist");
+    modifier SproutExist(address owner, uint x_id, uint y_id){
+        require(sprout_map[owner][x_id][y_id].isset, "location does not exist");
         _;
     }
 
     // the design for now is more tend to update continuouslly, the running speed might be a great concern
     // Perhaps could be solved by storing data locally
-    function getSproutLook(uint x_id, uint y_id) public view locationExist(x_id, y_id) 
+    function getSproutLook(address owner, uint x_id, uint y_id) public view SproutExist(owner, x_id, y_id) 
     returns(bool sprout_stage, bool seed_yellow, bool seed_round, uint8 height, uint8 width, uint8 color, uint8 die_stage) {
         uint color;
         uint height;
@@ -85,8 +83,8 @@ contract SproutApp {
         uint height_gen= 0;
         uint width_gen= 0;
         uint speed_gen= 0;
-        uint temp1 = sprout_list[x_id][y_id].dna1;
-        uint temp2 = sprout_list[x_id][y_id].dna2;
+        uint temp1 = sprout_list[owner][x_id][y_id].dna1;
+        uint temp2 = sprout_list[owner][x_id][y_id].dna2;
 
         //determine genes (mendilen traits)
         bool seed_yellow = (((temp1%2) & (temp2%2)) == 1);
@@ -118,7 +116,7 @@ contract SproutApp {
 
         //determine growing stage
         uint fullgrown_time = (380.sub(speed_gen.mul(1.5)) days).div(190);
-        uint now_stage = now.sub(sprout_list[x_id][y_id].planttime);
+        uint now_stage = now.sub(sprout_list[owner][x_id][y_id].planttime);
         bool sprout_stage = (now_stage < fullgrown_time.div(10));
         //determine height width die_stage
         if(now_stage > fullgrown_time) {
@@ -135,7 +133,7 @@ contract SproutApp {
         return (sprout_stage, seed_yellow, seed_round, height, width, color, die_stage)
 
     }
-
+    // not completed function
     function getAllid() public view returns(uint[] memory x, bool[] memory y) {
 
         uint[] memory ids = new uint[](len);
@@ -147,32 +145,31 @@ contract SproutApp {
         }
         return (ids, isCompletes);
     }
-/*
-    function addTodo(string memory _taskName) public {
-        Todo memory todo = Todo(_taskName, false, true);
-        uint todoId = todos.push(todo) - 1;
 
-        emit OnTodoAdded(todoId);
+    //the smart contract is impossible to generate complete randomness, 
+    //so I leave this part to the front ends, just call the random generated uint256 number
+    //before hand
+    function addSprout(address owner, uint x_id, uint y_id, uint dna1, uint dna2) public {
+        sprout_list[owner][x_id][y_id] = Sprout(dna1, dna2, now, true, owner)
+        emit OnAdd(address owner, uint x_id, uint y_id, uint dna1, uint dna2);
     }
 
-    function deleteTodo(uint _todoId) public isValidTodo(_todoId) {
-        todos[_todoId].isValid = false;
-
-        emit OnTodoDeleted(_todoId);
+    function plugSprout(address owner, uint x_id, uint y_id) public SproutExist(address owner, uint x_id, uint y_id) 
+    returns(bool sprout_stage, bool seed_yellow, bool seed_round, uint8 height, uint8 width, uint8 color, uint8 die_stage){
+        bool sprout_stage;
+        bool seed_yellow;
+        bool seed_round;
+        uint8 height;
+        uint8 width;
+        uint8 color;
+        uint8 die_stage;
+        sprout_stage, seed_yellow, seed_round, height, width, color, die_stage = getSproutLook(owner,  x_id,  y_id) ;
+        sprout_list[owner][x_id][y_id].isset = false
+        emit OnPlug(address owner, uint x_id, uint y_id);
+        return(sprout_stage, seed_yellow, seed_round, height, width, color, die_stage)
     }
 
-    function completeTodo(uint _todoId) public isValidTodo(_todoId) {
-        todos[_todoId].isComplete = true;
 
-        emit OnTodoCompleted(_todoId);
-    }
-
-    function undoneTodo(uint _todoId) public isValidTodo(_todoId) {
-        todos[_todoId].isComplete = false;
-
-        emit OnTodoUndone(_todoId);
-    }
-*/
     // Private methods
     function _getSetSprouts() private view returns(uint length) {
         uint[] memory validTodos = new uint[](todos.length);
