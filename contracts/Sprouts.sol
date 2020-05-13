@@ -130,29 +130,42 @@ contract SproutApp {
         }
 
 
-        return (sprout_stage, seed_yellow, seed_round, height, width, color, die_stage)
+        return (sprout_stage, seed_yellow, seed_round, height, width, color, die_stage);
 
     }
+
     // not completed function
-    function getAllId() public view returns(uint[] memory x, bool[] memory y) {
-
-        uint[] memory ids = new uint[](len);
-        bool[] memory isCompletes = new bool[](len);
-        for (uint i = 0; i < len; i++) {
-            uint id = valids[i];
-            ids[i] = id;
-            isCompletes[i] = todos[id].isComplete;
+    function getAllId(address owner) public view returns(uint[] memory xs, uint[] memory ys) {
+        // find number of sprout owner have
+        uint count = 0;
+        for (uint i =0; i <10; i++){
+            for (uint j =0; j <10; j++){
+                if (sprout_list[owner][i][j].isset){ count++;}
+            }
         }
-        return (ids, isCompletes);
+        //retrieve each index
+        uint[] memory xs = new uint[](count);
+        uint[] memory ys = new bool[](count);
+        count = 0;
+        for (uint i =0; i <10; i++){
+            for (uint j =0; j <10; j++){
+                if (sprout_list[owner][i][j].isset){ 
+                    x[count]= i;
+                    y[count] = j;
+                    count++;
+                }
+            }
+        }
+        return (xs, ys);
     }
 
-    //the smart contract is impossible to generate complete randomness, 
-    //so I leave this part to the front ends, just call the random generated uint256 number
-    //before hand
-    function addSprout(address owner, uint x_id, uint y_id, uint dna1, uint dna2) public {
-        sprout_list[owner][x_id][y_id] = Sprout(dna1, dna2, now, true, owner)
-        emit OnAdd(address owner, uint x_id, uint y_id, uint dna1, uint dna2);
+    // complete random dna is impossible to be genrated inside contract
+    function randomAddSprout(address owner, uint x_id, uint y_id) public {
+        uint dna1 = uint256(keccak256(block.timestamp, block.difficulty));
+        uint dna2 = uint256(keccak256(block.difficulty, block.timestamp));
+        addSprout(owner, x_id, y_id, dna1, dna1);
     }
+
 
     function plugSprout(address owner, uint x_id, uint y_id) public SproutExist(address owner, uint x_id, uint y_id) 
     returns(bool sprout_stage, bool seed_yellow, bool seed_round, uint8 height, uint8 width, uint8 color, uint8 die_stage){
@@ -164,22 +177,17 @@ contract SproutApp {
         uint8 color;
         uint8 die_stage;
         sprout_stage, seed_yellow, seed_round, height, width, color, die_stage = getSproutLook(owner,  x_id,  y_id) ;
-        sprout_list[owner][x_id][y_id].isset = false
+        sprout_list[owner][x_id][y_id].isset = false;
         emit OnPlug(address owner, uint x_id, uint y_id);
-        return(sprout_stage, seed_yellow, seed_round, height, width, color, die_stage)
+        return(sprout_stage, seed_yellow, seed_round, height, width, color, die_stage);
     }
 
 
     // Private methods
-    function _getSetSprouts() private view returns(uint length) {
-        uint count = 0;
-        for (uint i = 0; i < 10; i++) {
-            for (uint j =0; j <10; j++){
-                if (sprout_list[i][j]) {
-                    count++;
-                 }
-            }
-        }
-        return(validTodos, count);
+
+    // random dna is impossible to be genrated inside contract
+    function addSprout(address owner, uint x_id, uint y_id, uint dna1, uint dna2) private {
+        sprout_list[owner][x_id][y_id] = Sprout(dna1, dna2, now, true, owner);
+        emit OnAdd(address owner, uint x_id, uint y_id, uint dna1, uint dna2);
     }
 }
