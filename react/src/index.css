@@ -1,13 +1,27 @@
-html, body {
-  height: 100%;
-  color: #DDDDDD;
-  background: #2D2D2D;
-}
 
 h1 {
-  margin: 20px 0 15px 0;  
+  margin: 20px 0 15px 0;
+}
+.ts .attached .secondary .segment {
+    padding: 5px;
 }
 
+#white_font {
+    color: #FFFFFF;
+}
+
+#colored_bar {
+    background-color: #79A8B9;
+    padding: 10px;
+}
+
+#mynavbar {
+    margin: 10px;
+}
+
+#main_content {
+    margin: 10px;
+}
 #main {
   width: 600px;
   margin: 0 auto;

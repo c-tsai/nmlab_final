@@ -1,9 +1,15 @@
 import React from 'react';
 
-  
+
 class TodoHeader extends React.Component {
   render () {
-    return <h1>Nmlab TodoApp</h1>;
+    return(
+        <div class="ts large link attached inverted info menu">
+                <div id="mynavbar" class="ts container">
+                    <h1 id="white_font">Sprout Farm!</h1>
+                </div>
+        </div>
+    );
   }
 }
 
