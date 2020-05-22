@@ -100,6 +100,21 @@ contract SproutFactory is Ownable {
         }
 
         return (sprout_stage, seed_yellow, seed_round, height, width, color, die_stage);
-
     }
+    
+    function plugSprout(uint x_id, uint y_id) external SproutExist(x_id, y_id) 
+    returns(bool sprout_stage, bool seed_yellow, bool seed_round, uint8 height, uint8 width, uint8 color, uint8 die_stage){
+        bool sprout_stage;
+        bool seed_yellow;
+        bool seed_round;
+        uint8 height;
+        uint8 width;
+        uint8 color;
+        uint8 die_stage;
+        sprout_stage, seed_yellow, seed_round, height, width, color, die_stage = getSproutLook(x_id,  y_id) ;
+        sprout_list[msg.sender][x_id][y_id].isset = false;
+        emit OnPlug(uint x_id, uint y_id);
+        return(sprout_stage, seed_yellow, seed_round, height, width, color, die_stage);
+    }
+
 }
