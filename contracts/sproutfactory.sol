@@ -44,7 +44,7 @@ contract SproutFactory is Ownable {
     addSprout(x_id, y_id, dna1, dna1);
   }
   
-  function getSproutLook(uint x_id, uint y_id) external view SproutExist(x_id, y_id) 
+  function getSproutLook(address owner, uint x_id, uint y_id) external view SproutExist(x_id, y_id) 
     returns(bool sprout_stage, bool seed_yellow, bool seed_round, uint8 height, uint8 width, uint8 color, uint8 die_stage) {
         uint color;
         uint height;
@@ -53,8 +53,8 @@ contract SproutFactory is Ownable {
         uint height_gen= 0;
         uint width_gen= 0;
         uint speed_gen= 0;
-        uint temp1 = sprout_list[msg.sender][x_id][y_id].dna1;
-        uint temp2 = sprout_list[msg.sender][x_id][y_id].dna2;
+        uint temp1 = sprout_list[owner][x_id][y_id].dna1;
+        uint temp2 = sprout_list[owner][x_id][y_id].dna2;
 
         //determine genes (mendilen traits)
         bool seed_yellow = (((temp1%2) | (temp2%2)) == 1);
@@ -102,8 +102,9 @@ contract SproutFactory is Ownable {
         return (sprout_stage, seed_yellow, seed_round, height, width, color, die_stage);
     }
     
-    function plugSprout(uint x_id, uint y_id) external SproutExist(x_id, y_id) 
+    function plugSprout(uint _sproutId, uint x_id, uint y_id) external SproutExist(x_id, y_id) 
     returns(bool sprout_stage, bool seed_yellow, bool seed_round, uint8 height, uint8 width, uint8 color, uint8 die_stage){
+        require (msg.sender == sproutToOwner[_sproutId]);
         bool sprout_stage;
         bool seed_yellow;
         bool seed_round;
