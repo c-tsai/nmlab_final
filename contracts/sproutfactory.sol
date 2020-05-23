@@ -8,8 +8,8 @@ contract SproutFactory is Ownable {
   using SafeMath for uint256;
   using SafeMath32 for uint32;
 
-  event OnAdd(uint SproutId, uint x_id, uint y_id, uint dna1, uint dna2);
-  event OnPlug(uint SproutId, uint x_id, uint y_id);
+  event OnAdd(uint sproutId, uint x_id, uint y_id, uint dna1, uint dna2);
+  event OnPlug(uint sproutId, uint x_id, uint y_id);
 
   struct Sprout {
     uint dna1;
@@ -34,8 +34,7 @@ contract SproutFactory is Ownable {
     uint id = sprouts.push(Sprout(dna1, dna2, now, true)) - 1;
     sproutToOwner[id] = msg.sender;
     sprout_list[msg.sender][x_id][y_id] = Sprout(dna1, dna2, now, true);
-    ownerSproutCount[msg.sender] = ownerSproutCount[msg.sender].add(1);
-    emit OnAdd(x_id, y_id, dna1, dna2);
+    emit OnAdd(id, x_id, y_id, dna1, dna2);
   }
   
   function randomAddSprout(uint x_id, uint y_id) public {
@@ -102,9 +101,9 @@ contract SproutFactory is Ownable {
         return (sprout_stage, seed_yellow, seed_round, height, width, color, die_stage);
     }
     
-    function plugSprout(uint _sproutId, uint x_id, uint y_id) external SproutExist(x_id, y_id) 
+    function plugSprout(uint sproutId, uint x_id, uint y_id) external SproutExist(x_id, y_id) 
     returns(bool sprout_stage, bool seed_yellow, bool seed_round, uint8 height, uint8 width, uint8 color, uint8 die_stage){
-        require (msg.sender == sproutToOwner[_sproutId]);
+        require (msg.sender == sproutToOwner[sproutId]);
         bool sprout_stage;
         bool seed_yellow;
         bool seed_round;
@@ -114,7 +113,7 @@ contract SproutFactory is Ownable {
         uint8 die_stage;
         sprout_stage, seed_yellow, seed_round, height, width, color, die_stage = getSproutLook(x_id,  y_id) ;
         sprout_list[msg.sender][x_id][y_id].isset = false;
-        emit OnPlug(uint x_id, uint y_id);
+        emit OnPlug(sproutId, uint x_id, uint y_id);
         return(sprout_stage, seed_yellow, seed_round, height, width, color, die_stage);
     }
 
