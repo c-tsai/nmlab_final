@@ -175,7 +175,7 @@ contract Sprout is Ownable {
         uint8 width;
         uint8 color;
         uint price;
-        seed_yellow, seed_round, height, width, color, price = getSproutLook(msg.sender, x_id,  y_id);
+        (seed_yellow, seed_round, height, width, color, price) = getSproutLook(msg.sender, x_id,  y_id);
         if(sprout_list[msg.sender][x_id][y_id].isset == true){
           sprout_list[msg.sender][x_id][y_id].isset = false;
           balance[msg.sender] = balance[msg.sender].add(price);
