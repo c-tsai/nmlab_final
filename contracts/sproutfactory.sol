@@ -17,6 +17,7 @@ contract SproutFactory is Ownable {
     uint dna1;
     uint dna2;
     uint planttime;
+    uint readytime = 0;
     bool isset;
  }
   
@@ -32,11 +33,20 @@ contract SproutFactory is Ownable {
     _;
   }
   
+  function _triggerReplant(Sprout storage _sprout) internal {
+    _sprout.readytime = now + replantTime;
+  }
+
+  function _isReady(Sprout storage _sprout) internal view returns (bool) {
+      return (_sprout.readytime <= now);
+  }
+  
   function addSprout(uint x_id, uint y_id, uint dna1, uint dna2) internal {
     require(sprout_list[msg.sender][x_id][y_id].isset == false);
-    uint id = sprouts.push(Sprout(dna1, dna2, now, true)) - 1;
+    require(_isReady(sprout_list[msg.sender][x_id][y_id]));
+    uint id = sprouts.push(Sprout(dna1, dna2, now, 0, true)) - 1;
     sproutToOwner[id] = msg.sender;
-    sprout_list[msg.sender][x_id][y_id] = Sprout(dna1, dna2, now, true);
+    sprout_list[msg.sender][x_id][y_id] = Sprout(dna1, dna2, now, 0, true);
     emit OnAdd(id, x_id, y_id, dna1, dna2);
   }
   
@@ -99,7 +109,7 @@ contract SproutFactory is Ownable {
             }
             else{
               sprout_list[owner][x_id][y_id].isset = false;
-              
+              _triggerReplant(sprout_list[owner][x_id][y_id]);
             } 
         }
         else{
