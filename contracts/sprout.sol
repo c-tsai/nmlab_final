@@ -62,7 +62,7 @@ contract Sprout is Ownable {
     uint dna1;
     uint dna2;
     uint planttime;
-    uint readytime = 0;
+    uint readytime;
     bool isset;
   }
  
