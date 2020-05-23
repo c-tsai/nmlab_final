@@ -57,7 +57,7 @@ contract SproutFactory is Ownable {
   }
   
   function getSproutLook(address owner, uint x_id, uint y_id) external view SproutExist(x_id, y_id) 
-    returns(bool seed_yellow, bool seed_round, uint8 height, uint8 width, uint8 color, uint8 die_stage, uint8 price) {
+    returns(bool seed_yellow, bool seed_round, uint8 height, uint8 width, uint8 color, uint8 price) {
         uint8 color;
         uint8 height;
         uint8 width;
@@ -110,6 +110,7 @@ contract SproutFactory is Ownable {
             else{
               sprout_list[owner][x_id][y_id].isset = false;
               _triggerReplant(sprout_list[owner][x_id][y_id]);
+              return(false, false, 0, 0, 0, 0);
             } 
         }
         else{
@@ -119,25 +120,23 @@ contract SproutFactory is Ownable {
             else{price = 100;}
         }
 
-        return (seed_yellow, seed_round, height, width, color, die_stage, price);
+        return (seed_yellow, seed_round, height, width, color, price);
     }
     
     function plugSprout(uint sproutId, uint x_id, uint y_id) external {
         require (msg.sender == sproutToOwner[sproutId]);
-        bool sprout_stage;
         bool seed_yellow;
         bool seed_round;
         uint8 height;
         uint8 width;
         uint8 color;
-        uint8 die_stage;
         uint8 price;
-        seed_yellow, seed_round, height, width, color, die_stage, price = getSproutLook(msg.sender, x_id,  y_id);
+        seed_yellow, seed_round, height, width, color, price = getSproutLook(msg.sender, x_id,  y_id);
         if(sprout_list[msg.sender][x_id][y_id].isset == true){
           sprout_list[msg.sender][x_id][y_id].isset = false;
           sprout_storage[msg.sender].push(price);
-          emit OnPlug(sproutId, x_id, y_id);
-        }
+         }
+         emit OnPlug(sproutId, x_id, y_id);
       }
 
 }
