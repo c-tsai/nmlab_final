@@ -73,7 +73,7 @@ contract Sprout is Ownable {
   mapping (address => uint) balance;
 
   modifier SproutExist(uint x_id, uint y_id){
-    require(sprout_map[msg.sender][x_id][y_id].isset, "location does not exist");
+    require(sprout_list[msg.sender][x_id][y_id].isset, "location does not exist");
     _;
   }
   
@@ -100,7 +100,7 @@ contract Sprout is Ownable {
     addSprout(x_id, y_id, dna1, dna1);
   }
   
-  function getSproutLook(address owner, uint x_id, uint y_id) external view SproutExist(x_id, y_id) 
+  function getSproutLook(address owner, uint x_id, uint y_id) public view SproutExist(x_id, y_id) 
     returns(bool seed_yellow, bool seed_round, uint8 height, uint8 width, uint8 color, uint price) {
         uint8 color;
         uint8 height;
