@@ -1,16 +1,18 @@
 pragma solidity ^0.5.0;
 
 contract SproutApp {
-    
+    event OnSproutAdded(uint sproutId);
+
     struct Sprout {
-        uint planttime;
+       uint id;
+       bool isPlanted;
     }
-    Sprout[] sprout_list;
-    event OnAdd(uint sproutId);
-    // random dna is impossible to be genrated inside contract
-    function addSprout(uint _planttime) public {
-        Sprout memory sprout = Sprout(_planttime);
-        uint sproutId = sprout_list.push(sprout) - 1;
-        emit OnAdd(sproutId);
+    
+    Sprout[25] sprouts;
+    function addSprout(uint _id) public {
+        sprouts[_id].id = _id;
+        sprouts[_id].isPlanted = true;
+        
+        emit OnSproutAdded(_id);
     }
 }

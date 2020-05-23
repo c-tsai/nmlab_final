@@ -1,55 +1,41 @@
-
-h1 {
-  margin: 20px 0 15px 0;
-}
 .ts .attached .secondary .segment {
-    padding: 5px;
+  padding: 5px;
+}
+#main_container {
+  padding: 10px;
 }
 
 #white_font {
-    color: #FFFFFF;
+  color: #FFFFFF;
 }
 
 #colored_bar {
-    background-color: #79A8B9;
-    padding: 10px;
+  background-color: #79A8B9;
+  padding: 10px;
+  color: #FFFFFF;
 }
 
 #mynavbar {
-    margin: 10px;
+  margin: 10px;
 }
 
-#main_content {
-    margin: 10px;
-}
-#main {
-  width: 600px;
-  margin: 0 auto;
-  text-align: left;
+#user {
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
 }
 
-ul {
-  list-style: none;
+#sprout_container {
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 0px;
+  margin-bottom: 20px;
 }
 
-ul>li:hover {
-  background-color: #F5F5F5;
-}
-
-.form-inline .form-control {
-  width: 50%;
-  margin-left: 80px;
-}
-
-.done {
-  color: black;
-  text-decoration: line-through;
-}
-
-.undone {
-  color: #66DD00;
-}
-
-.icon {
-  margin: 6px 10px 6px 0;
+#shopitem {
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 0px;
+  margin-bottom: 15px;
 }
