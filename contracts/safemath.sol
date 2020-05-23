@@ -81,33 +81,33 @@ library SafeMath32 {
 }
 
 /**
- * @title SafeMath16
- * @dev SafeMath library implemented for uint16
+ * @title SafeMath8
+ * @dev SafeMath library implemented for uint8
  */
-library SafeMath16 {
+library SafeMath8 {
 
-  function mul(uint16 a, uint16 b) internal pure returns (uint16) {
+  function mul(uint8 a, uint8 b) internal pure returns (uint8) {
     if (a == 0) {
       return 0;
     }
-    uint16 c = a * b;
+    uint8 c = a * b;
     assert(c / a == b);
     return c;
   }
 
-  function div(uint16 a, uint16 b) internal pure returns (uint16) {
+  function div(uint8 a, uint8 b) internal pure returns (uint8) {
     // assert(b > 0); // Solidity automatically throws when dividing by 0
-    uint16 c = a / b;
+    uint8 c = a / b;
     // assert(a == b * c + a % b); // There is no case in which this doesn't hold
     return c;
   }
 
-  function sub(uint16 a, uint16 b) internal pure returns (uint16) {
+  function sub(uint8 a, uint8 b) internal pure returns (uint8) {
     assert(b <= a);
     return a - b;
   }
 
-  function add(uint16 a, uint16 b) internal pure returns (uint16) {
+  function add(uint8 a, uint8 b) internal pure returns (uint8) {
     uint16 c = a + b;
     assert(c >= a);
     return c;
