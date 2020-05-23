@@ -3,7 +3,7 @@ pragma solidity ^0.5.0;
 import "./ownable.sol";
 import "./safemath.sol";
 
-contract SproutFactory is Ownable {
+contract Sprout is Ownable {
 
   using SafeMath for uint256;
   using SafeMath8 for uint8;
