@@ -141,7 +141,7 @@ contract Sprout is Ownable {
         }
 
         //determine growing stage
-        uint fullgrown_time = (380.sub(speed_gen.mul(1.5)) days).div(190);
+        uint fullgrown_time = ((380.sub(speed_gen.mul(1.5))).div(190)) days;
         uint now_stage = now.sub(sprout_list[owner][x_id][y_id].planttime);
         bool sprout_stage = (now_stage < fullgrown_time.div(10));
         //determine height width die_stage
