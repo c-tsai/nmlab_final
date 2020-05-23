@@ -21,16 +21,11 @@ contract Sprout is Ownable {
     bool isset;
   }
  
-  struct Sprout_trade{
-    uint sprout_id;
-    uint8 price;
-  }
-  
   Sprout[] public sprouts;
   
   mapping (uint => address) public sproutToOwner;
   mapping (address => Sprout[10][10]) sprout_list;
-  mapping (address => Sprout_trade[]) sprout_storage;
+  mapping (address => uint) balance;
 
   modifier SproutExist(uint x_id, uint y_id){
     require(sprout_map[msg.sender][x_id][y_id].isset, "location does not exist");
@@ -61,11 +56,11 @@ contract Sprout is Ownable {
   }
   
   function getSproutLook(address owner, uint x_id, uint y_id) external view SproutExist(x_id, y_id) 
-    returns(bool seed_yellow, bool seed_round, uint8 height, uint8 width, uint8 color, uint8 price) {
+    returns(bool seed_yellow, bool seed_round, uint8 height, uint8 width, uint8 color, uint price) {
         uint8 color;
         uint8 height;
         uint8 width;
-        uint8 price;
+        uint price;
         uint8 height_gen= 0;
         uint8 width_gen= 0;
         uint8 speed_gen= 0;
@@ -134,11 +129,11 @@ contract Sprout is Ownable {
         uint8 height;
         uint8 width;
         uint8 color;
-        uint8 price;
+        uint price;
         seed_yellow, seed_round, height, width, color, price = getSproutLook(msg.sender, x_id,  y_id);
         if(sprout_list[msg.sender][x_id][y_id].isset == true){
           sprout_list[msg.sender][x_id][y_id].isset = false;
-          sprout_storage[msg.sender].push(Sprout_trade(sproutId, price));
+          balance[msg.sender] = balance[msg.sender].add(price);
          }
          emit OnPlug(sproutId, x_id, y_id);
       }
