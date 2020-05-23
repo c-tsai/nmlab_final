@@ -7,6 +7,7 @@ import SproutHeader from './components/sproutheader';
 import User from './components/user';
 import Shop from './components/shop';
 import SproutAppContract from "./build/contracts/SproutApp.json"
+
 import './index.css';
 
 var sprouts = [
@@ -80,7 +81,11 @@ class SproutApp extends React.Component {
       this.state.sprouts[sproutid].value = 1;
       this.setState({sprouts: sprouts});
       //contract.methods.completeTodo(itemIndex).send({from: accounts[0]});
-      this.state.contract.methods.addSprout(sproutid).send({from: this.state.accounts[0]});
+      var planttime = Date.now();
+      console.log(typeof(planttime))
+      console.log(this.state.contract);
+      this.state.contract.methods.AddSprout(sproutid, planttime).send({from: this.state.accounts[0]});
+      console.log(planttime);
       console.log('index.js addSprout');
   }
 
