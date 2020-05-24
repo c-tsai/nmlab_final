@@ -108,7 +108,7 @@ library SafeMath8 {
   }
 
   function add(uint8 a, uint8 b) internal pure returns (uint8) {
-    uint16 c = a + b;
+    uint8 c = a + b;
     assert(c >= a);
     return c;
   }
