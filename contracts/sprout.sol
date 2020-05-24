@@ -51,7 +51,6 @@ Notes:
 contract Sprout is Ownable {
 
   using SafeMath for uint256;
-  using SafeMath8 for uint8;
 
   event OnAdd(uint sproutId, uint x_id, uint y_id, uint dna1, uint dna2);
   event OnPlug(uint sproutId, uint x_id, uint y_id);
@@ -95,20 +94,20 @@ contract Sprout is Ownable {
   }
   
   function randomAddSprout(uint x_id, uint y_id) public {
-    uint dna1 = uint256(keccak256(block.timestamp, block.difficulty));
-    uint dna2 = uint256(keccak256(block.difficulty, block.timestamp));
+    uint dna1 = uint(keccak256(abi.encodePacked(block.timestamp)));
+    uint dna2 = uint(keccak256(abi.encodePacked(block.difficulty)));
     addSprout(x_id, y_id, dna1, dna1);
   }
   
-  function getSproutLook(address owner, uint x_id, uint y_id) public view SproutExist(x_id, y_id) 
-    returns(bool seed_yellow, bool seed_round, uint8 height, uint8 width, uint8 color, uint price) {
-        uint8 color;
-        uint8 height;
-        uint8 width;
+  function getSproutLook(address owner, uint x_id, uint y_id) public SproutExist(x_id, y_id) 
+    returns(bool seed_yellow, bool seed_round, uint height, uint width, uint color, uint price) {
+        uint color;
+        uint height;
+        uint width;
         uint price;
-        uint8 height_gen= 0;
-        uint8 width_gen= 0;
-        uint8 speed_gen= 0;
+        uint height_gen= 0;
+        uint width_gen= 0;
+        uint speed_gen= 0;
         uint temp1 = sprout_list[owner][x_id][y_id].dna1;
         uint temp2 = sprout_list[owner][x_id][y_id].dna2;
 
@@ -141,7 +140,7 @@ contract Sprout is Ownable {
         }
 
         //determine growing stage
-        uint fullgrown_time = ((380.sub(speed_gen.mul(1.5))).div(190)) * 1 days;
+        uint fullgrown_time = ((380-(speed_gen.mul(3).div(2)))/190)* 1 days;
         uint now_stage = now.sub(sprout_list[owner][x_id][y_id].planttime);
         bool sprout_stage = (now_stage < fullgrown_time.div(10));
         //determine height width die_stage
@@ -171,9 +170,9 @@ contract Sprout is Ownable {
         require (msg.sender == sproutToOwner[sproutId]);
         bool seed_yellow;
         bool seed_round;
-        uint8 height;
-        uint8 width;
-        uint8 color;
+        uint height;
+        uint width;
+        uint color;
         uint price;
         (seed_yellow, seed_round, height, width, color, price) = getSproutLook(msg.sender, x_id,  y_id);
         if(sprout_list[msg.sender][x_id][y_id].isset == true){
@@ -184,3 +183,4 @@ contract Sprout is Ownable {
       }
 
 }
+
