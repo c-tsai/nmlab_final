@@ -65,6 +65,21 @@ contract Sprout is Ownable {
     bool isset;
   }
  
+  struct trait{
+    bool seed_yellow;
+    bool seed_round;
+    bool sprout_stage;
+    uint height;
+    uint width;
+    uint price;
+    uint color;
+    uint height_gen;
+    uint width_gen;
+    uint speed_gen;
+    uint fullgrown_time;
+    uint now_stage;
+  }
+  
   Sprout[] public sprouts;
   
   mapping (uint => address) public sproutToOwner;
@@ -99,56 +114,50 @@ contract Sprout is Ownable {
     addSprout(x_id, y_id, dna1, dna1);
   }
   
-  function getSproutLook(address owner, uint x_id, uint y_id) public SproutExist(x_id, y_id) 
+  function getSproutLook(address owner, uint x_id, uint y_id) internal SproutExist(x_id, y_id) 
     returns(bool seed_yellow, bool seed_round, uint height, uint width, uint color, uint price) {
-        uint color;
-        uint height;
-        uint width;
-        uint price;
-        uint height_gen= 0;
-        uint width_gen= 0;
-        uint speed_gen= 0;
+        trait memory t;
         uint temp1 = sprout_list[owner][x_id][y_id].dna1;
         uint temp2 = sprout_list[owner][x_id][y_id].dna2;
 
         //determine genes (mendilen traits)
-        bool seed_yellow = (((temp1%2) | (temp2%2)) == 1);
+        t.seed_yellow = (((temp1%2) | (temp2%2)) == 1);
         temp1 = temp1 >> 1;temp2 = temp2 >> 1;
-        bool seed_round = (((temp1%2) | (temp2%2)) == 1);
+        t.seed_round = (((temp1%2) | (temp2 %2)) == 1);
         temp1 = temp1 >> 1;temp2 = temp2 >> 1;
 
         //determine genes (polygene traits)
         for (uint i =2; i <41; i++){
-            if (temp1%2 == 1){color++;}
-            if (temp2%2 == 1){color++;}
+            if (temp1%2 == 1){t.color = t.color.add(1);}
+            if (temp2%2 == 1){t.color = t.color.add(1);}
             temp1 = temp1 >> 1;temp2 = temp2 >> 1;
         }
         for (uint i =41; i <101; i++){
-            if (temp1%2 == 1){width_gen++;}
-            if (temp2%2 == 1){width_gen++;}
+            if (temp1%2 == 1){t.width_gen = t.width_gen.add(1);}
+            if (temp2%2 == 1){t.width_gen = t.width_gen.add(1);}
             temp1 = temp1 >> 1;temp2 = temp2 >> 1;
         }
         for (uint i =101; i <161; i++){
-            if (temp1%2 == 1){height_gen++;}
-            if (temp2%2 == 1){height_gen++;}
+            if (temp1%2 == 1){t.height_gen = t.height_gen.add(1);}
+            if (temp2%2 == 1){t.height_gen = t.height_gen.add(1);}
             temp1 = temp1 >> 1;temp2 = temp2 >> 1;
         }
         for (uint i =161; i <256; i++){
-            if (temp1%2 == 1){speed_gen++;}
-            if (temp2%2 == 1){speed_gen++;}
+            if (temp1%2 == 1){t.speed_gen = t.speed_gen.add(1);}
+            if (temp2%2 == 1){t.speed_gen = t.speed_gen.add(1);}
             temp1 = temp1 >> 1;temp2 = temp2 >> 1;
         }
 
         //determine growing stage
-        uint fullgrown_time = ((380-(speed_gen.mul(3).div(2)))/190)* 1 days;
-        uint now_stage = now.sub(sprout_list[owner][x_id][y_id].planttime);
-        bool sprout_stage = (now_stage < fullgrown_time.div(10));
+        t.fullgrown_time = ((380-(t.speed_gen.mul(3).div(2)))/190)* 1 days;
+        t.now_stage = now.sub(sprout_list[owner][x_id][y_id].planttime);
+        t.sprout_stage = (t.now_stage < t.fullgrown_time.div(10));
         //determine height width die_stage
-        if(now_stage > fullgrown_time) {
-            if((now_stage.sub(fullgrown_time)) < fullgrown_time.div(20)){
-              price = 50;
-              height = ((height_gen.add(120)).mul(60)).div(120);
-              width = ((width_gen.add(15)).mul(5)).div(15);
+        if(t.now_stage > t.fullgrown_time) {
+            if((t.now_stage.sub(t.fullgrown_time)) < t.fullgrown_time.div(20)){
+              t.price = 50;
+              t.height = ((t.height_gen.add(120)).mul(60)).div(120);
+              t.width = ((t.width_gen.add(15)).mul(5)).div(15);
             }
             else{
               sprout_list[owner][x_id][y_id].isset = false;
@@ -157,16 +166,16 @@ contract Sprout is Ownable {
             } 
         }
         else{
-            height = ((height_gen.add(120)).mul(60)).mul(fullgrown_time).div(120).div(now_stage);
-            width = ((width_gen.add(15)).mul(5)).mul(fullgrown_time).div(15).div(now_stage);
-            if(sprout_stage == true){price = 250;}
-            else{price = 100;}
+            t.height = ((t.height_gen.add(120)).mul(60)).mul(t.fullgrown_time).div(120).div(t.now_stage);
+            t.width = ((t.width_gen.add(15)).mul(5)).mul(t.fullgrown_time).div(15).div(t.now_stage);
+            if(t.sprout_stage == true){t.price = 250;}
+            else{t.price = 100;}
         }
 
-        return (seed_yellow, seed_round, height, width, color, price);
+        return (t.seed_yellow, t.seed_round, t.height, t.width, t.color, t.price);
     }
     
-    function plugSprout(uint sproutId, uint x_id, uint y_id) external {
+    function plugSprout(uint sproutId, uint x_id, uint y_id) internal {
         require (msg.sender == sproutToOwner[sproutId]);
         bool seed_yellow;
         bool seed_round;
