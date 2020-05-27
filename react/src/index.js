@@ -20,6 +20,7 @@ import TodoAppContract from "./build/contracts/TodoApp.json"
 import TodoHeader from './pages/TodoHeader';
 import TodoForm from './pages/TodoForm';
 import TodoList from './pages/TodoList';
+import TestButton from './components/testbutton';
 import './index.css';
 
 var todoItems = [];
@@ -31,6 +32,9 @@ class TodoApp extends React.Component {
     this.removeItem = this.removeItem.bind(this);
     this.markTodoDone = this.markTodoDone.bind(this);
     this.state = {todoItems: todoItems, web3: null, accounts: null, contract: null };
+
+    this.test_c = this.test_c.bind(this);
+    this.test_j = this.test_j.bind(this);
   }
 
   componentDidMount = async () => {
@@ -83,6 +87,13 @@ class TodoApp extends React.Component {
   }
 
   /* END OF YOUR CODE */
+  test_c(){
+    console.log('test c');
+  }
+
+  test_j(){
+    console.log('test j');
+  }
 
   render() {
     if (!this.state.web3) {
@@ -90,9 +101,8 @@ class TodoApp extends React.Component {
     }
     return (
       <div id="main">
-        <TodoHeader />
-        <TodoList items={this.props.initItems} removeItem={this.removeItem} markTodoDone={this.markTodoDone}/>
-        <TodoForm addItem={this.addItem} />
+        <TestButton testname="c" test_c={this.test_c}/>
+        <TestButton testname="j" test_j={this.test_j}/>
       </div>
     );
   }
