@@ -54,14 +54,15 @@ contract Sprout is Ownable {
 
   event OnAdd(uint sproutId, uint x_id, uint y_id, uint dna1, uint dna2);
   event OnPlug(uint sproutId, uint x_id, uint y_id);
-
+  
+  //If the sprout didn't be plugged and then died, 12 hours later can the grid be added with a new sprout. 
   uint replantTime = 12 hours;
   
   struct Sprout {
     uint dna1;
     uint dna2;
     uint planttime;
-    uint readytime;
+    uint readytime;//ready to replant
     bool isset;
   }
  
@@ -80,11 +81,11 @@ contract Sprout is Ownable {
     uint now_stage;
   }
   
-  Sprout[] public sprouts;
+  Sprout[] public sprouts;//store sprout id
   
   mapping (uint => address) public sproutToOwner;
   mapping (address => Sprout[10][10]) sprout_list;
-  mapping (address => uint) balance;
+  mapping (address => uint) balance;//account
 
   modifier SproutExist(uint x_id, uint y_id){
     require(sprout_list[msg.sender][x_id][y_id].isset, "location does not exist");
@@ -154,13 +155,13 @@ contract Sprout is Ownable {
         t.sprout_stage = (t.now_stage < t.fullgrown_time.div(10));
         //determine height width die_stage
         if(t.now_stage > t.fullgrown_time) {
-            if((t.now_stage.sub(t.fullgrown_time)) < t.fullgrown_time.div(20)){
+            if((t.now_stage.sub(t.fullgrown_time)) < t.fullgrown_time.div(20)){//before death
               t.price = 50;
               t.height = ((t.height_gen.add(120)).mul(60)).div(120);
               t.width = ((t.width_gen.add(15)).mul(5)).div(15);
             }
             else{
-              sprout_list[owner][x_id][y_id].isset = false;
+              sprout_list[owner][x_id][y_id].isset = false;//die
               _triggerReplant(sprout_list[owner][x_id][y_id]);
               return(false, false, 0, 0, 0, 0);
             } 
