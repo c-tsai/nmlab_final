@@ -52,13 +52,15 @@ contract Sprout is Ownable {
 
   using SafeMath for uint256;
 
-  event OnAdd(uint sproutId, uint x_id, uint y_id, uint dna1, uint dna2);
-  event OnPlug(uint sproutId, uint x_id, uint y_id);
+  event OnAdd(uint x_id, uint y_id, uint dna1, uint dna2);
+  event OnPlug(uint x_id, uint y_id);
+  //events for debug usage
+  event debugStage(uint s);
   
   //If the sprout didn't be plugged and then died, 12 hours later can the grid be added with a new sprout. 
   uint replantTime = 12 hours;
   
-  struct Sprout {
+  struct sprout {
     uint dna1;
     uint dna2;
     uint planttime;
@@ -81,10 +83,9 @@ contract Sprout is Ownable {
     uint now_stage;
   }
   
-  Sprout[] public sprouts;//store sprout id
+  sprout[] public sprouts;//store sprout id
   
-  mapping (uint => address) public sproutToOwner;
-  mapping (address => Sprout[10][10]) sprout_list;
+  mapping (address => sprout[5][5]) sprout_list;
   mapping (address => uint) balance;//account
 
   modifier SproutExist(uint x_id, uint y_id){
@@ -92,42 +93,44 @@ contract Sprout is Ownable {
     _;
   }
   
-  function _triggerReplant(Sprout storage _sprout) internal {
+  function _triggerReplant(sprout storage _sprout) internal {
     _sprout.readytime = now + replantTime;
   }
 
-  function _isReady(Sprout storage _sprout) internal view returns (bool) {
+  function _isReady(sprout storage _sprout) internal view returns (bool) {
       return (_sprout.readytime <= now);
   }
   
   function addSprout(uint x_id, uint y_id, uint dna1, uint dna2) internal {
     require(sprout_list[msg.sender][x_id][y_id].isset == false);
     require(_isReady(sprout_list[msg.sender][x_id][y_id]));
-    uint id = sprouts.push(Sprout(dna1, dna2, now, 0, true)) - 1;
-    sproutToOwner[id] = msg.sender;
-    sprout_list[msg.sender][x_id][y_id] = Sprout(dna1, dna2, now, 0, true);
-    emit OnAdd(id, x_id, y_id, dna1, dna2);
+    sprout_list[msg.sender][x_id][y_id] = sprout(dna1, dna2, now, 0, true);
+    emit OnAdd(x_id, y_id, dna1, dna2);
   }
   
   function randomAddSprout(uint x_id, uint y_id) public {
     uint dna1 = uint(keccak256(abi.encodePacked(block.timestamp)));
     uint dna2 = uint(keccak256(abi.encodePacked(block.difficulty)));
-    addSprout(x_id, y_id, dna1, dna1);
+    addSprout(x_id, y_id, dna1, dna2);
   }
   
-  function getSproutLook(address owner, uint x_id, uint y_id) internal SproutExist(x_id, y_id) 
+  function getSproutLook( uint x_id, uint y_id)  public /*SproutExist(x_id, y_id)*/ 
     returns(bool seed_yellow, bool seed_round, uint height, uint width, uint color, uint price) {
+        emit debugStage(0);
         trait memory t;
-        uint temp1 = sprout_list[owner][x_id][y_id].dna1;
-        uint temp2 = sprout_list[owner][x_id][y_id].dna2;
+        uint temp1 = sprout_list[msg.sender][x_id][y_id].dna1;
+        uint temp2 = sprout_list[msg.sender][x_id][y_id].dna2;
+        uint plantime = sprout_list[msg.sender][x_id][y_id].planttime;
 
         //determine genes (mendilen traits)
+        emit debugStage(1);
         t.seed_yellow = (((temp1%2) | (temp2%2)) == 1);
         temp1 = temp1 >> 1;temp2 = temp2 >> 1;
         t.seed_round = (((temp1%2) | (temp2 %2)) == 1);
         temp1 = temp1 >> 1;temp2 = temp2 >> 1;
 
         //determine genes (polygene traits)
+        emit debugStage(2);
         for (uint i =2; i <41; i++){
             if (temp1%2 == 1){t.color = t.color.add(1);}
             if (temp2%2 == 1){t.color = t.color.add(1);}
@@ -150,46 +153,52 @@ contract Sprout is Ownable {
         }
 
         //determine growing stage
+        emit debugStage(3);
         t.fullgrown_time = ((380-(t.speed_gen.mul(3).div(2)))/190)* 1 days;
-        t.now_stage = now.sub(sprout_list[owner][x_id][y_id].planttime);
+        t.now_stage = now.sub(plantime);
         t.sprout_stage = (t.now_stage < t.fullgrown_time.div(10));
         //determine height width die_stage
-        if(t.now_stage > t.fullgrown_time) {
+       if(t.now_stage > t.fullgrown_time) {
             if((t.now_stage.sub(t.fullgrown_time)) < t.fullgrown_time.div(20)){//before death
               t.price = 50;
               t.height = ((t.height_gen.add(120)).mul(60)).div(120);
               t.width = ((t.width_gen.add(15)).mul(5)).div(15);
             }
             else{
-              sprout_list[owner][x_id][y_id].isset = false;//die
-              _triggerReplant(sprout_list[owner][x_id][y_id]);
-              return(false, false, 0, 0, 0, 0);
+              sprout_list[msg.sender][x_id][y_id].isset = false;//die
+              _triggerReplant(sprout_list[msg.sender][x_id][y_id]);
+              return (false, false, 0, 0, 0, 0);
             } 
         }
         else{
-            t.height = ((t.height_gen.add(120)).mul(60)).mul(t.fullgrown_time).div(120).div(t.now_stage);
-            t.width = ((t.width_gen.add(15)).mul(5)).mul(t.fullgrown_time).div(15).div(t.now_stage);
+            if(t.now_stage==0){
+              t.height = ((t.height_gen.add(120)).mul(60)).mul(t.fullgrown_time).div(120);
+              t.width = ((t.width_gen.add(15)).mul(5)).mul(t.fullgrown_time).div(15);
+            } else{
+              t.height = ((t.height_gen.add(120)).mul(60)).mul(t.fullgrown_time).div(120).div(t.now_stage);
+              t.width = ((t.width_gen.add(15)).mul(5)).mul(t.fullgrown_time).div(15).div(t.now_stage); 
+            }
             if(t.sprout_stage == true){t.price = 250;}
             else{t.price = 100;}
         }
 
         return (t.seed_yellow, t.seed_round, t.height, t.width, t.color, t.price);
+        
     }
     
-    function plugSprout(uint sproutId, uint x_id, uint y_id) internal {
-        require (msg.sender == sproutToOwner[sproutId]);
+    function plugSprout(uint x_id, uint y_id) public {
         bool seed_yellow;
         bool seed_round;
         uint height;
         uint width;
         uint color;
         uint price;
-        (seed_yellow, seed_round, height, width, color, price) = getSproutLook(msg.sender, x_id,  y_id);
-        if(sprout_list[msg.sender][x_id][y_id].isset == true){
+        (seed_yellow, seed_round, height, width, color, price) = getSproutLook(x_id,  y_id);
+        /*if(sprout_list[msg.sender][x_id][y_id].isset == true){
           sprout_list[msg.sender][x_id][y_id].isset = false;
           balance[msg.sender] = balance[msg.sender].add(price);
-         }
-         emit OnPlug(sproutId, x_id, y_id);
+         }*/
+         emit OnPlug(x_id, y_id);
       }
 
 }
