@@ -8,6 +8,10 @@ contract("Sprout", function() {
         return token.randomAddSprout(2,1);
     }).then(function(result){
         return token.plugSprout(2,1);
+    }).then(function(result){
+        return token.getBalance();
+    }).then(function(result){
+        assert.equal(result.toNumber(), 250, 'account 0 balance is wrong');
     });
   });
   /*it("should assert ", function() {

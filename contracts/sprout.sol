@@ -100,6 +100,10 @@ contract Sprout is Ownable {
   function _isReady(sprout storage _sprout) internal view returns (bool) {
       return (_sprout.readytime <= now);
   }
+
+  function getBalance() public view returns (uint){
+    return balance[msg.sender];
+  }
   
   function addSprout(uint x_id, uint y_id, uint dna1, uint dna2) internal {
     require(sprout_list[msg.sender][x_id][y_id].isset == false);
@@ -172,8 +176,8 @@ contract Sprout is Ownable {
         }
         else{
             if(t.now_stage==0){
-              t.height = ((t.height_gen.add(120)).mul(60)).mul(t.fullgrown_time).div(120);
-              t.width = ((t.width_gen.add(15)).mul(5)).mul(t.fullgrown_time).div(15);
+              t.height = 0;
+              t.width = 0;
             } else{
               t.height = ((t.height_gen.add(120)).mul(60)).mul(t.fullgrown_time).div(120).div(t.now_stage);
               t.width = ((t.width_gen.add(15)).mul(5)).mul(t.fullgrown_time).div(15).div(t.now_stage); 
@@ -194,10 +198,10 @@ contract Sprout is Ownable {
         uint color;
         uint price;
         (seed_yellow, seed_round, height, width, color, price) = getSproutLook(x_id,  y_id);
-        /*if(sprout_list[msg.sender][x_id][y_id].isset == true){
+        if(sprout_list[msg.sender][x_id][y_id].isset == true){
           sprout_list[msg.sender][x_id][y_id].isset = false;
           balance[msg.sender] = balance[msg.sender].add(price);
-         }*/
+         }
          emit OnPlug(x_id, y_id);
       }
 
