@@ -180,7 +180,7 @@ contract Sprout is Ownable {
         //determine height width die_stage
        if(t.now_stage > t.fullgrown_time) {
             if((t.now_stage.sub(t.fullgrown_time)) < t.fullgrown_time.div(20)){//before death
-              t.price = 50;
+              t.price = 5;
               t.height = ((t.height_gen.add(120)).mul(60)).div(120);
               t.width = ((t.width_gen.add(15)).mul(5)).div(15);
             }
@@ -194,12 +194,16 @@ contract Sprout is Ownable {
             if(t.now_stage==0){
               t.height = 0;
               t.width = 0;
+              t.price = 0;
             } else{
               t.height = ((t.height_gen.add(120)).mul(60)).mul(t.fullgrown_time).div(120).div(t.now_stage);
               t.width = ((t.width_gen.add(15)).mul(5)).mul(t.fullgrown_time).div(15).div(t.now_stage); 
+              if(t.sprout_stage == true){
+                t.price = t.height.mul(t.width).sub(t.color.div(10));
+                if(!t.seed_yellow){t.price.add(5);}
+                if(t.seed_round){t.price.add(5);}
+              } else{t.price = 10;}
             }
-            if(t.sprout_stage == true){t.price = 250;}
-            else{t.price = 100;}
         }
 
         return (t.seed_yellow, t.seed_round, t.height, t.width, t.color, t.price);
