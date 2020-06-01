@@ -34,6 +34,13 @@ About Growing:
         (represent by another uint die_stage, det defaultly highest to 10)
     5. The bean can only be planted at (x, y) where 0 <= x <10, 0 <= y < 10
 
+About price:
+    1. plug a non-sprout stage bean stalk get $10
+    2. plug a dying stage bean stalk get $5
+    3. a sprout's price = height*width-color/10
+    4. price +5 if bean is round
+    5. price +5 if bean is yellow  
+
 
 
 Notes:
@@ -200,7 +207,7 @@ contract Sprout is Ownable {
               t.width = ((t.width_gen.add(15)).mul(5)).mul(t.fullgrown_time).div(15).div(t.now_stage); 
               if(t.sprout_stage == true){
                 t.price = t.height.mul(t.width).sub(t.color.div(10));
-                if(!t.seed_yellow){t.price.add(5);}
+                if(t.seed_yellow){t.price.add(5);}
                 if(t.seed_round){t.price.add(5);}
               } else{t.price = 10;}
             }
