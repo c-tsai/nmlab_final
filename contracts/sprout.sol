@@ -66,6 +66,7 @@ contract Sprout is Ownable {
     uint planttime;
     uint readytime;//ready to replant
     bool isset;
+    gene memory g;
   }
  
   struct trait{
@@ -76,12 +77,20 @@ contract Sprout is Ownable {
     uint width;
     uint price;
     uint color;
+    uint now_stage;
     uint height_gen;
     uint width_gen;
     uint speed_gen;
     uint fullgrown_time;
-    uint now_stage;
   }
+
+  struct gene{
+    uint height_gen;
+    uint width_gen;
+    uint speed_gen;
+    uint fullgrown_time;
+  }
+  
   
   sprout[] public sprouts;//store sprout id
   
@@ -108,7 +117,37 @@ contract Sprout is Ownable {
   function addSprout(uint x_id, uint y_id, uint dna1, uint dna2) internal {
     require(sprout_list[msg.sender][x_id][y_id].isset == false);
     require(_isReady(sprout_list[msg.sender][x_id][y_id]));
-    sprout_list[msg.sender][x_id][y_id] = sprout(dna1, dna2, now, 0, true);
+    gene memory g;
+    uint temp1 = dna1;
+    uint temp2 = dna2;
+
+    //determine genes (polygene traits)
+    temp1 = temp1 >> 1;temp2 = temp2 >> 1;
+    temp1 = temp1 >> 1;temp2 = temp2 >> 1;
+    for (uint i =2; i <41; i++){
+        if (temp1%2 == 1){g.color = g.color.add(1);}
+        if (temp2%2 == 1){g.color = g.color.add(1);}
+        temp1 = temp1 >> 1;temp2 = temp2 >> 1;
+    }
+    for (uint i =41; i <101; i++){
+        if (temp1%2 == 1){g.width_gen = g.width_gen.add(1);}
+        if (temp2%2 == 1){g.width_gen = g.width_gen.add(1);}
+        temp1 = temp1 >> 1;temp2 = temp2 >> 1;
+    }
+    for (uint i =101; i <161; i++){
+        if (temp1%2 == 1){g.height_gen = g.height_gen.add(1);}
+        if (temp2%2 == 1){g.height_gen = g.height_gen.add(1);}
+        temp1 = temp1 >> 1;temp2 = temp2 >> 1;
+    }
+    for (uint i =161; i <256; i++){
+        if (temp1%2 == 1){g.speed_gen = g.speed_gen.add(1);}
+        if (temp2%2 == 1){g.speed_gen = g.speed_gen.add(1);}
+        temp1 = temp1 >> 1;temp2 = temp2 >> 1;
+    }
+    //determine growing stage
+    g.fullgrown_time = ((380-(t.speed_gen.mul(3).div(2)))/190)* 1 days;
+
+    sprout_list[msg.sender][x_id][y_id] = sprout(dna1, dna2, now, 0, true, g);
     emit OnAdd(x_id, y_id, dna1, dna2);
   }
   
@@ -118,47 +157,24 @@ contract Sprout is Ownable {
     addSprout(x_id, y_id, dna1, dna2);
   }
   
-  function getSproutLook( uint x_id, uint y_id)  public /*SproutExist(x_id, y_id)*/ 
+  function getSproutLook( uint x_id, uint y_id)  public SproutExist(x_id, y_id)
     returns(bool seed_yellow, bool seed_round, uint height, uint width, uint color, uint price) {
-        emit debugStage(0);
         trait memory t;
         uint temp1 = sprout_list[msg.sender][x_id][y_id].dna1;
         uint temp2 = sprout_list[msg.sender][x_id][y_id].dna2;
         uint plantime = sprout_list[msg.sender][x_id][y_id].planttime;
+        t.height_gen = sprout_list[msg.sender][x_id][y_id].height_gen;
+        t.width_gen = sprout_list[msg.sender][x_id][y_id].width_gen;
+        t.speed_gen = sprout_list[msg.sender][x_id][y_id].speed_gen;
+        t.fullgrown_time = sprout_list[msg.sender][x_id][y_id].fullgrown_time;
+    
 
         //determine genes (mendilen traits)
-        emit debugStage(1);
         t.seed_yellow = (((temp1%2) | (temp2%2)) == 1);
         temp1 = temp1 >> 1;temp2 = temp2 >> 1;
         t.seed_round = (((temp1%2) | (temp2 %2)) == 1);
-        temp1 = temp1 >> 1;temp2 = temp2 >> 1;
-
-        //determine genes (polygene traits)
-        emit debugStage(2);
-        for (uint i =2; i <41; i++){
-            if (temp1%2 == 1){t.color = t.color.add(1);}
-            if (temp2%2 == 1){t.color = t.color.add(1);}
-            temp1 = temp1 >> 1;temp2 = temp2 >> 1;
-        }
-        for (uint i =41; i <101; i++){
-            if (temp1%2 == 1){t.width_gen = t.width_gen.add(1);}
-            if (temp2%2 == 1){t.width_gen = t.width_gen.add(1);}
-            temp1 = temp1 >> 1;temp2 = temp2 >> 1;
-        }
-        for (uint i =101; i <161; i++){
-            if (temp1%2 == 1){t.height_gen = t.height_gen.add(1);}
-            if (temp2%2 == 1){t.height_gen = t.height_gen.add(1);}
-            temp1 = temp1 >> 1;temp2 = temp2 >> 1;
-        }
-        for (uint i =161; i <256; i++){
-            if (temp1%2 == 1){t.speed_gen = t.speed_gen.add(1);}
-            if (temp2%2 == 1){t.speed_gen = t.speed_gen.add(1);}
-            temp1 = temp1 >> 1;temp2 = temp2 >> 1;
-        }
 
         //determine growing stage
-        emit debugStage(3);
-        t.fullgrown_time = ((380-(t.speed_gen.mul(3).div(2)))/190)* 1 days;
         t.now_stage = now.sub(plantime);
         t.sprout_stage = (t.now_stage < t.fullgrown_time.div(10));
         //determine height width die_stage
