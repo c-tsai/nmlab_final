@@ -75,21 +75,6 @@ contract Sprout is Ownable {
     bool isset;
     gene memory g;
   }
- 
-  struct trait{
-    bool seed_yellow;
-    bool seed_round;
-    bool sprout_stage;
-    uint height;
-    uint width;
-    uint price;
-    uint color;
-    uint now_stage;
-    uint height_gen;
-    uint width_gen;
-    uint speed_gen;
-    uint fullgrown_time;
-  }
 
   struct gene{
     uint height_gen;
@@ -164,32 +149,31 @@ contract Sprout is Ownable {
     addSprout(x_id, y_id, dna1, dna2);
   }
   
-  function getSproutLook( uint x_id, uint y_id)  public SproutExist(x_id, y_id)
+  function getSproutLook( uint x_id, uint y_id)  public view SproutExist(x_id, y_id)
     returns(bool seed_yellow, bool seed_round, uint height, uint width, uint color, uint price) {
-        trait memory t;
         uint temp1 = sprout_list[msg.sender][x_id][y_id].dna1;
         uint temp2 = sprout_list[msg.sender][x_id][y_id].dna2;
         uint plantime = sprout_list[msg.sender][x_id][y_id].planttime;
-        t.height_gen = sprout_list[msg.sender][x_id][y_id].height_gen;
-        t.width_gen = sprout_list[msg.sender][x_id][y_id].width_gen;
-        t.speed_gen = sprout_list[msg.sender][x_id][y_id].speed_gen;
-        t.fullgrown_time = sprout_list[msg.sender][x_id][y_id].fullgrown_time;
+        uint height_gen = sprout_list[msg.sender][x_id][y_id].height_gen;
+        uint width_gen = sprout_list[msg.sender][x_id][y_id].width_gen;
+        uint speed_gen = sprout_list[msg.sender][x_id][y_id].speed_gen;
+        uint fullgrown_time = sprout_list[msg.sender][x_id][y_id].fullgrown_time;
     
 
         //determine genes (mendilen traits)
-        t.seed_yellow = (((temp1%2) | (temp2%2)) == 1);
+        uint seed_yellow = (((temp1%2) | (temp2%2)) == 1);
         temp1 = temp1 >> 1;temp2 = temp2 >> 1;
-        t.seed_round = (((temp1%2) | (temp2 %2)) == 1);
+        uint seed_round = (((temp1%2) | (temp2 %2)) == 1);
 
         //determine growing stage
-        t.now_stage = now.sub(plantime);
-        t.sprout_stage = (t.now_stage < t.fullgrown_time.div(10));
+        uint now_stage = now.sub(plantime);
+        uint sprout_stage = (now_stage < fullgrown_time.div(10));
         //determine height width die_stage
        if(t.now_stage > t.fullgrown_time) {
-            if((t.now_stage.sub(t.fullgrown_time)) < t.fullgrown_time.div(20)){//before death
-              t.price = 5;
-              t.height = ((t.height_gen.add(120)).mul(60)).div(120);
-              t.width = ((t.width_gen.add(15)).mul(5)).div(15);
+            if((now_stage.sub(t.fullgrown_time)) < fullgrown_time.div(20)){//before death
+              uint price = 5;
+              uint height = ((height_gen.add(120)).mul(60)).div(120);
+              uint width = ((width_gen.add(15)).mul(5)).div(15);
             }
             else{
               sprout_list[msg.sender][x_id][y_id].isset = false;//die
@@ -199,21 +183,21 @@ contract Sprout is Ownable {
         }
         else{
             if(t.now_stage==0){
-              t.height = 0;
-              t.width = 0;
-              t.price = 0;
+              uint height = 0;
+              uint width = 0;
+              uint price = 0;
             } else{
-              t.height = ((t.height_gen.add(120)).mul(60)).mul(t.fullgrown_time).div(120).div(t.now_stage);
-              t.width = ((t.width_gen.add(15)).mul(5)).mul(t.fullgrown_time).div(15).div(t.now_stage); 
-              if(t.sprout_stage == true){
-                t.price = t.height.mul(t.width).sub(t.color.div(10));
-                if(t.seed_yellow){t.price.add(5);}
-                if(t.seed_round){t.price.add(5);}
-              } else{t.price = 10;}
+              uint height = ((height_gen.add(120)).mul(60)).mul(fullgrown_time).div(120).div(now_stage);
+              uint width = ((width_gen.add(15)).mul(5)).mul(fullgrown_time).div(15).div(now_stage); 
+              if(sprout_stage == true){
+                price = height.mul(width).sub(color.div(10));
+                if(seed_yellow){price.add(5);}
+                if(seed_round){price.add(5);}
+              } else{price = 10;}
             }
         }
 
-        return (t.seed_yellow, t.seed_round, t.height, t.width, t.color, t.price);
+        return (seed_yellow, seed_round, height, width, color, price);
         
     }
     
