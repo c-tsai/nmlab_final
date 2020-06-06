@@ -1,13 +1,20 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import getWeb3 from "./utils/getWeb3";
+import Web3 from 'web3';
 import Sprout from './components/sprout';
 import SproutFarm from './components/sproutfarm';
 import SproutHeader from './components/sproutheader';
 import User from './components/user';
 import Shop from './components/shop';
-import SproutAppContract from "./build/contracts/SproutApp.json"
+import TestButton from "./components/testbutton";
 
+import SproutContract from './build/contracts/Sprout.json'
+import SproutOwnershipContract from './build/contracts/SproutOwnership.json'
+//import SproutAppContract from "./build/contracts/SproutApp.json";
+//import SproutContract from "./build/contracts/Sprout.json";
+//import SproutOwnershipContract from "./build/contracts/SproutOwnership.json";
+//import OwnershipContract from './build/contracts/Ownable.json';
 import './index.css';
 
 var sprouts = [
@@ -42,9 +49,10 @@ class SproutApp extends React.Component {
     super(props);
     this.state = {
       sprouts: sprouts,
-      web3: null, 
-      accounts: null, 
-      contract: null, 
+      web3: null,
+      accounts: null,
+      contract1: null,
+      contract2: null,
       username: 'Goldy',
       userbalance: 20000,
     };
@@ -52,19 +60,28 @@ class SproutApp extends React.Component {
     this.addSprout = this.addSprout.bind(this);
     this.plugSprout = this.plugSprout.bind(this);
     this.handlePurchase = this.handlePurchase.bind(this);
+    this.test_c = this.test_c.bind(this);
+    this.test_j = this.test_j.bind(this);
   }
 
   componentDidMount = async () => {
     try {
-      const web3 = await getWeb3();
+      //const web3 = await getWeb3();
+      const web3 = new Web3(Web3.givenProvider || 'ws://localhost:8545');
       const accounts = await web3.eth.getAccounts();
       const networkId = await web3.eth.net.getId();
-      const deployedNetwork = SproutAppContract.networks[networkId];
-      const instance = new web3.eth.Contract(  
-        SproutAppContract.abi,
-        deployedNetwork && deployedNetwork.address,
+
+      const deployedNetwork1 = SproutContract.networks[networkId];
+      const instance1 = new web3.eth.Contract(
+        SproutContract.abi,
+        deployedNetwork1 && deployedNetwork1.address,
       )
-      this.setState({ web3, accounts, contract: instance});
+      const deployedNetwork2 = SproutOwnershipContract.networks[networkId];
+      const instance2 = new web3.eth.Contract(
+          SproutOwnershipContract.abi,
+          deployedNetwork2 && deployedNetwork2.address
+      )
+      this.setState({ web3, accounts, contract1: instance1, contract2: instance2});
     } catch (error) {
       alert(
         `Failed to load web3, accounts, or contract. Check console for details.`,
@@ -80,21 +97,43 @@ class SproutApp extends React.Component {
   addSprout(sproutid){
       this.state.sprouts[sproutid].value = 1;
       this.setState({sprouts: sprouts});
-      //contract.methods.completeTodo(itemIndex).send({from: accounts[0]});
       var planttime = Date.now();
-      console.log(typeof(planttime))
-      console.log(this.state.contract);
-      this.state.contract.methods.AddSprout(sproutid, planttime).send({from: this.state.accounts[0]});
-      console.log(planttime);
-      console.log('index.js addSprout');
+      var x_id;
+      var y_id;
+      x_id = sproutid%5;
+      y_id = (sproutid-x_id)/5;
+      console.log(x_id, y_id);
+      this.state.contract1.methods.randomAddSprout(x_id, y_id).send({
+        from: this.state.accounts[0]
+      })
+      console.log('Add Sprout');
+      this.state.contract1.getPastEvents({ fromBlock: 0, toBlock:'latest' }, 
+      function(error, events){ console.log(events); })
   }
 
   plugSprout(sproutid) {
-      this.state.sprouts[sproutid].value = 0;
-      this.setState({sprouts: sprouts});
-      console.log('index.js plugSprout');
+      var x_id;
+      var y_id;
+      x_id = sproutid%5;
+      y_id = (sproutid-x_id)/5;
+      console.log(x_id, y_id);
+      this.state.contract1.methods.plugSprout(x_id, y_id).send({
+        from: this.state.accounts[0]
+      })
+     console.log('Plug Sprout')
   }
-  
+
+  test_c(){
+    console.log('Get Look');
+    const receipt = this.state.contract1.methods.getSproutLook(0, 0).send({
+        from: this.state.accounts[0]
+    });
+    console.log(receipt._events)
+  }
+
+  test_j(){
+    
+  }
   render() {
     if (!this.state.web3) {
       return <div>Loading Web3, accounts, and contract...</div>;
@@ -106,7 +145,9 @@ class SproutApp extends React.Component {
               <div class="four wide column segment">
                   <User username={this.state.username} userbalance={this.state.userbalance} />
                   <Shop handlePurchase={this.handlePurchase} />
-              </div>   
+                  <TestButton test_c={this.test_c} testname='c' />
+                  <TestButton test_j={this.test_j} testname='j' />
+              </div>
                   <SproutFarm addSprout={this.addSprout} plugSprout={this.plugSprout} sprouts={this.state.sprouts} />
           </div>
       </div>
