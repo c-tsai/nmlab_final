@@ -39,3 +39,26 @@
   margin-top: 0px;
   margin-bottom: 15px;
 }
+
+#sproutbox {
+  margin-bottom: 0px;
+}
+
+#actionbox {
+  margin: 3px;
+  padding: 5px;
+}
+
+#transferbox{
+  width: 122px;
+}
+
+#usersidebar{
+  width: 150px;
+}
+#userbox {
+  height: 170px;
+}
+#userimg{
+  padding: 10px;
+}

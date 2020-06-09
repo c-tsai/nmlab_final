@@ -34,13 +34,6 @@ class User extends Component {
                     <div  class="item">
                         <div class="content">
                             <div class="ts header">
-                                Level: {this.state.level}
-                            </div>  
-                        </div>
-                    </div>
-                    <div  class="item">
-                        <div class="content">
-                            <div class="ts header">
                                 Balance: {this.props.userbalance} $
                             </div>  
                         </div>
