@@ -52,6 +52,10 @@ Notes:
     4. In addition to the current polygene traits, I'm also consider adding some other such as disease resistence, productivity, etc.
     5. Feel free to let me know if you think any design is impractical or what parameter is wierd or any other helpful advice :)
 
+Updates:
+    the getSproutLook function is substitute with getColor, getSproutHeight, getSproutWidth, getSproutPrice,
+    getSeedYellow, getSeedRound. Each of these functions is a view public function, which must be workable in 
+    without using Event feature.
 
     
 */
@@ -73,18 +77,20 @@ contract Sprout is Ownable {
     uint planttime;
     uint readytime;//ready to replant
     bool isset;
-    gene memory g;
+    gene g;
   }
 
-  struct gene{
+  struct gene {
     uint height_gen;
     uint width_gen;
-    uint speed_gen;
+    uint color;
     uint fullgrown_time;
+    bool seed_yellow;
+    bool seed_round;
   }
   
   
-  sprout[] public sprouts;//store sprout id
+  //sprout[] public sprouts;//store sprout id
   
   mapping (address => sprout[5][5]) sprout_list;
   mapping (address => uint) balance;//account
@@ -93,7 +99,8 @@ contract Sprout is Ownable {
     require(sprout_list[msg.sender][x_id][y_id].isset, "location does not exist");
     _;
   }
-  
+  /* dead and replant function wouldn't work for now, when it's dead all the price, height, width would be 
+  0, but you still need to plug it manually*/
   function _triggerReplant(sprout storage _sprout) internal {
     _sprout.readytime = now + replantTime;
   }
@@ -105,6 +112,31 @@ contract Sprout is Ownable {
   function getBalance() public view returns (uint){
     return balance[msg.sender];
   }
+
+//get TRAITS
+  function getFullGrownTime(uint x_id, uint y_id) internal view returns(uint){
+    return sprout_list[msg.sender][x_id][y_id].g.fullgrown_time;
+  }
+  function getPlantTime(uint x_id,  uint y_id) internal view returns(uint){
+    return sprout_list[msg.sender][x_id][y_id].planttime;
+  }
+  function getHeightGene(uint x_id, uint y_id) internal view returns(uint){
+    return sprout_list[msg.sender][x_id][y_id].g.height_gen;
+  }
+  function getWidthGene(uint x_id, uint y_id) internal view returns(uint){
+    return sprout_list[msg.sender][x_id][y_id].g.width_gen;
+  }
+  function getSeedRound(uint x_id, uint y_id) public view SproutExist(x_id, y_id) returns(bool){
+    return sprout_list[msg.sender][x_id][y_id].g.seed_round;
+  }
+  function getSeedYellow(uint x_id, uint y_id) public view SproutExist(x_id, y_id) returns(bool){
+    return sprout_list[msg.sender][x_id][y_id].g.seed_round;
+  }
+  function getColor(uint x_id, uint y_id) public view SproutExist(x_id, y_id) returns(uint){
+    return sprout_list[msg.sender][x_id][y_id].g.color;
+  }
+
+
   
   function addSprout(uint x_id, uint y_id, uint dna1, uint dna2) internal {
     require(sprout_list[msg.sender][x_id][y_id].isset == false);
@@ -112,10 +144,13 @@ contract Sprout is Ownable {
     gene memory g;
     uint temp1 = dna1;
     uint temp2 = dna2;
+    uint speed_gen;
 
+    //determine genes (mendilen traits)
+    g.seed_yellow = (((temp1%2) | (temp2%2)) == 1);
+    temp1 = temp1 >> 1;temp2 = temp2 >> 1;
+    g.seed_round = (((temp1%2) | (temp2 %2)) == 1);
     //determine genes (polygene traits)
-    temp1 = temp1 >> 1;temp2 = temp2 >> 1;
-    temp1 = temp1 >> 1;temp2 = temp2 >> 1;
     for (uint i =2; i <41; i++){
         if (temp1%2 == 1){g.color = g.color.add(1);}
         if (temp2%2 == 1){g.color = g.color.add(1);}
@@ -132,12 +167,12 @@ contract Sprout is Ownable {
         temp1 = temp1 >> 1;temp2 = temp2 >> 1;
     }
     for (uint i =161; i <256; i++){
-        if (temp1%2 == 1){g.speed_gen = g.speed_gen.add(1);}
-        if (temp2%2 == 1){g.speed_gen = g.speed_gen.add(1);}
+        if (temp1%2 == 1){speed_gen = speed_gen.add(1);}
+        if (temp2%2 == 1){speed_gen = speed_gen.add(1);}
         temp1 = temp1 >> 1;temp2 = temp2 >> 1;
     }
     //determine growing stage
-    g.fullgrown_time = ((380-(t.speed_gen.mul(3).div(2)))/190)* 1 days;
+    g.fullgrown_time = ((380-(speed_gen.mul(3).div(2)))/190)* 1 days;
 
     sprout_list[msg.sender][x_id][y_id] = sprout(dna1, dna2, now, 0, true, g);
     emit OnAdd(x_id, y_id, dna1, dna2);
@@ -148,67 +183,80 @@ contract Sprout is Ownable {
     uint dna2 = uint(keccak256(abi.encodePacked(block.difficulty)));
     addSprout(x_id, y_id, dna1, dna2);
   }
-  
-  function getSproutLook( uint x_id, uint y_id)  public view SproutExist(x_id, y_id)
-    returns(bool seed_yellow, bool seed_round, uint height, uint width, uint color, uint price) {
-        uint temp1 = sprout_list[msg.sender][x_id][y_id].dna1;
-        uint temp2 = sprout_list[msg.sender][x_id][y_id].dna2;
-        uint plantime = sprout_list[msg.sender][x_id][y_id].planttime;
-        uint height_gen = sprout_list[msg.sender][x_id][y_id].height_gen;
-        uint width_gen = sprout_list[msg.sender][x_id][y_id].width_gen;
-        uint speed_gen = sprout_list[msg.sender][x_id][y_id].speed_gen;
-        uint fullgrown_time = sprout_list[msg.sender][x_id][y_id].fullgrown_time;
-    
 
-        //determine genes (mendilen traits)
-        uint seed_yellow = (((temp1%2) | (temp2%2)) == 1);
-        temp1 = temp1 >> 1;temp2 = temp2 >> 1;
-        uint seed_round = (((temp1%2) | (temp2 %2)) == 1);
-
-        //determine growing stage
-        uint now_stage = now.sub(plantime);
-        uint sprout_stage = (now_stage < fullgrown_time.div(10));
-        //determine height width die_stage
-       if(t.now_stage > t.fullgrown_time) {
-            if((now_stage.sub(t.fullgrown_time)) < fullgrown_time.div(20)){//before death
-              uint price = 5;
-              uint height = ((height_gen.add(120)).mul(60)).div(120);
-              uint width = ((width_gen.add(15)).mul(5)).div(15);
-            }
-            else{
-              sprout_list[msg.sender][x_id][y_id].isset = false;//die
-              _triggerReplant(sprout_list[msg.sender][x_id][y_id]);
-              return (false, false, 0, 0, 0, 0);
-            } 
+  function getSproutHeight( uint now_stage, uint fullgrown_time, uint x_id, uint y_id) public view 
+    SproutExist(x_id, y_id) returns(uint){
+      uint height_gen =  getHeightGene(x_id, y_id);
+      if(now_stage > fullgrown_time) {
+            if((now_stage.sub(fullgrown_time)) < fullgrown_time.div(20)) {//before death
+              return (height_gen.add(120)).mul(60).div(120);
+            } else{ return 0;} 
         }
         else{
-            if(t.now_stage==0){
-              uint height = 0;
-              uint width = 0;
-              uint price = 0;
+            if(now_stage==0){ return 0;
             } else{
-              uint height = ((height_gen.add(120)).mul(60)).mul(fullgrown_time).div(120).div(now_stage);
-              uint width = ((width_gen.add(15)).mul(5)).mul(fullgrown_time).div(15).div(now_stage); 
-              if(sprout_stage == true){
-                price = height.mul(width).sub(color.div(10));
-                if(seed_yellow){price.add(5);}
-                if(seed_round){price.add(5);}
-              } else{price = 10;}
+              return((height_gen.add(120)).mul(60)).mul(fullgrown_time).div(120).div(now_stage);}
+        }
+  }
+
+  function getSproutWidth( uint now_stage, uint fullgrown_time, uint x_id, uint y_id) public view 
+    SproutExist(x_id, y_id) returns(uint){
+    uint width_gen =getWidthGene(x_id, y_id);
+      if(now_stage > fullgrown_time) {
+            if((now_stage.sub(fullgrown_time)) < fullgrown_time.div(20)) {//before death
+              return (width_gen.add(15)).mul(5).div(15);
+            } else{ return 0;} 
+        }
+        else{
+            if(now_stage==0){ return 0;
+            } else{
+              return((width_gen.add(15)).mul(5)).mul(fullgrown_time).div(15).div(now_stage);}
+        }
+  }
+
+  function getSproutPrice( uint now_stage, uint fullgrown_time, uint height, uint width, uint x_id, uint y_id) 
+    internal view SproutExist(x_id, y_id) returns(uint){
+      uint color = getColor(x_id, y_id);
+      bool seed_yellow = getSeedYellow(x_id, y_id);
+      bool seed_round = getSeedRound(x_id, y_id);
+      if(now_stage > fullgrown_time) {
+            if((now_stage.sub(fullgrown_time)) < fullgrown_time.div(20)) {//before death
+              return 5;
+            } else{ return 0;} 
+        }
+        else{
+            if(now_stage==0){ return 2;
+            } else{
+              uint price= height.mul(width).sub(color.div(10));
+              if(seed_round){ price.add(5);}
+              if(seed_yellow){ price.add(5);}
+              return price;
             }
         }
-
-        return (seed_yellow, seed_round, height, width, color, price);
+  }
+  
+ /* function getSproutLook( uint x_id, uint y_id)  public view SproutExist(x_id, y_id)
+    returns(bool, bool, uint, uint, uint, uint) {
+        //determine growing stage
+        uint now_stage = now.sub(getPlantTime(x_id, y_id));
+        uint fullgrown_time = getFullGrownTime(x_id, y_id);
+        //uint color = getColor(x_id, y_id);
+        //bool seed_yellow = getSeedYellow(x_id, y_id);
+        //bool seed_round = getSeedRound(x_id, y_id);
+        //determine height width die_stage
+        uint width = getSproutWidth(now_stage, fullgrown_time, getWidthGene(x_id, y_id));
+        uint height = getSproutHeight(now_stage, fullgrown_time, getHeightGene(x_id, y_id));
+        uint price = getSproutPrice(now_stage, fullgrown_time, height, width, getColor(x_id, y_id), getSeedRound(x_id, y_id), getSeedYellow(x_id, y_id));
+        return (getSeedRound(x_id, y_id), getSeedYellow(x_id, y_id), height, width, getColor(x_id, y_id), price);
         
-    }
+    }*/
     
-    function plugSprout(uint x_id, uint y_id) public {
-        bool seed_yellow;
-        bool seed_round;
-        uint height;
-        uint width;
-        uint color;
-        uint price;
-        (seed_yellow, seed_round, height, width, color, price) = getSproutLook(x_id,  y_id);
+    function plugSprout(uint x_id, uint y_id) public SproutExist(x_id, y_id){
+        uint now_stage = now.sub(getPlantTime(x_id, y_id));
+        uint fullgrown_time = getFullGrownTime(x_id, y_id);
+        uint width = getSproutWidth(now_stage, fullgrown_time, x_id, y_id);
+        uint height = getSproutHeight(now_stage, fullgrown_time, x_id, y_id);
+        uint price = getSproutPrice(now_stage, fullgrown_time, height, width, x_id, y_id);
         if(sprout_list[msg.sender][x_id][y_id].isset == true){
           sprout_list[msg.sender][x_id][y_id].isset = false;
           balance[msg.sender] = balance[msg.sender].add(price);
