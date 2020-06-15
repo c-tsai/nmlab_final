@@ -96,7 +96,11 @@ contract Sprout is Ownable {
   mapping (address => uint) balance;//account
 
   modifier SproutExist(uint x_id, uint y_id){
-    require(sprout_list[msg.sender][x_id][y_id].isset, "location does not exist");
+    require(sprout_list[msg.sender][x_id][y_id].isset, "location does not have sprout");
+    _;
+  }
+  modifier EnoughBuySeed(){
+    require(balance[msg.sender]> 50, "not enough money to buy random seed");
     _;
   }
   /* dead and replant function wouldn't work for now, when it's dead all the price, height, width would be 
@@ -109,9 +113,6 @@ contract Sprout is Ownable {
       return (_sprout.readytime <= now);
   }
 
-  function getBalance() public view returns (uint){
-    return balance[msg.sender];
-  }
 
 //get TRAITS
   function getFullGrownTime(uint x_id, uint y_id) internal view returns(uint){
@@ -178,10 +179,11 @@ contract Sprout is Ownable {
     emit OnAdd(x_id, y_id, dna1, dna2);
   }
   
-  function randomAddSprout(uint x_id, uint y_id) public {
+  function randomAddSprout(uint x_id, uint y_id) public EnoughBuySeed(){
     uint dna1 = uint(keccak256(abi.encodePacked(block.timestamp)));
     uint dna2 = uint(keccak256(abi.encodePacked(block.difficulty)));
     addSprout(x_id, y_id, dna1, dna2);
+    balance[msg.sender] = balance[msg.sender].sub(50);
   }
 
   function getSproutHeight( uint now_stage, uint fullgrown_time, uint x_id, uint y_id) public view 
@@ -234,22 +236,6 @@ contract Sprout is Ownable {
             }
         }
   }
-  
- /* function getSproutLook( uint x_id, uint y_id)  public view SproutExist(x_id, y_id)
-    returns(bool, bool, uint, uint, uint, uint) {
-        //determine growing stage
-        uint now_stage = now.sub(getPlantTime(x_id, y_id));
-        uint fullgrown_time = getFullGrownTime(x_id, y_id);
-        //uint color = getColor(x_id, y_id);
-        //bool seed_yellow = getSeedYellow(x_id, y_id);
-        //bool seed_round = getSeedRound(x_id, y_id);
-        //determine height width die_stage
-        uint width = getSproutWidth(now_stage, fullgrown_time, getWidthGene(x_id, y_id));
-        uint height = getSproutHeight(now_stage, fullgrown_time, getHeightGene(x_id, y_id));
-        uint price = getSproutPrice(now_stage, fullgrown_time, height, width, getColor(x_id, y_id), getSeedRound(x_id, y_id), getSeedYellow(x_id, y_id));
-        return (getSeedRound(x_id, y_id), getSeedYellow(x_id, y_id), height, width, getColor(x_id, y_id), price);
-        
-    }*/
     
     function plugSprout(uint x_id, uint y_id) public SproutExist(x_id, y_id){
         uint now_stage = now.sub(getPlantTime(x_id, y_id));
