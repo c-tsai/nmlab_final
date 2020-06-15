@@ -1,20 +1,16 @@
-const S = artifacts.require("Sprout");
+const S = artifacts.require("OwnerItem");
 
-contract("Sprout", function() {
-  it("PlugSprout testing", function() {
-    var token;
-    return S.deployed().then(function(instance){
-        token = instance;
-        return token.randomAddSprout(2,1);
-    }).then(function(result){
-        return token.plugSprout(2,1);
-    }).then(function(result){
-        return token.getBalance();
-    }).then(function(result){
-        assert.equal(result.toNumber(), 250, 'account 0 balance is wrong');
-    });
-  });
-  /*it("should assert ", function() {
+contract("OwnerItem", accounts => {
+  it("Owner testing", () => 
+    S.deployed()
+        .then(register => register.Register())
+        .then(instance => instance.randomAddSprout(0,0))
+	.then(res => res.balanceOf.call(account[0]))
+        .then(balance => {
+        assert.equal(balance.valueOf(), 50, 'account 0 balance is wrong');
+    }));
+});
+/*  it("should assert ", function() {
     var token;
     return S.deployed().then(function(instance){
         token = instance;
@@ -79,4 +75,4 @@ contract("Sprout", function() {
         assert.equal(result.toNumber(), 9900, 'account 0 balance is wrong');
     });
   });*/
-});
+//});

@@ -53,9 +53,10 @@ Notes:
     5. Feel free to let me know if you think any design is impractical or what parameter is wierd or any other helpful advice :)
 
 Updates:
-    the getSproutLook function is substitute with getColor, getSproutHeight, getSproutWidth, getSproutPrice,
+    1. the getSproutLook function is substitute with getColor, getSproutHeight, getSproutWidth, getSproutPrice,
     getSeedYellow, getSeedRound. Each of these functions is a view public function, which must be workable in 
     without using Event feature.
+    2. The cost of the randomAdd is $50
 
     
 */
