@@ -16,7 +16,7 @@ contract SproutMarket is OwnerItem {
         string description;
         uint value_each;
         uint num;
-        uint owner_list_id;
+        uint[4] content;// 4 is for seed product, may be expanded
         address owner;
         bool isValid;
     }
@@ -64,19 +64,23 @@ contract SproutMarket is OwnerItem {
     // Be aware of that the items put on market list won't be able to put back to your own item list again.
     function sellItem(uint id, uint num, uint value, string memory description) public {
         require(num <= getItemNum(id), "not enough item");
-        Product memory product = Product(_ItemList[msg.sender][id].itemName, description, value, num, id, msg.sender, true);
+        Product memory product = Product(_ItemList[msg.sender][id].itemName, description, value, num, 
+            _ItemList[msg.sender][id].content, msg.sender, true);
         uint Id = _MarketList.push(product) - 1;
         spendItem(id, num);
 
         emit OnProductAdded(Id);
     }
     function buyProduct(uint _Id, uint num) public isValidProduct(_Id){
-        require(num <= _MarketList[_Id].num, "not enough item");
+        require(num <= _MarketList[_Id].num, "not enough item on the market");
+        uint total = num.mul(_MarketList[_Id].value_each);
+        require(balanceOf(msg.sender) >= total, "not enough money");
+        transfer(_MarketList[_Id].owner, total);
+        addItem(_MarketList[_Id].producType, num, _MarketList[_Id].content);
     }
     // used when you no longer want to sell an item
     function deleteProduct(uint _Id) public isValidProduct(_Id) isProductOwner( _Id){
         _MarketList[_Id].isValid = false;
-
         emit OnProductDeleted(_Id);
     }
 

@@ -31,7 +31,7 @@ contract OwnerItem is SproutOwnership {
         require(isItemValid(_Id), "item must be valid to call");
         _;
     }
-    modifier isSeed(uint _Id){
+    modifier isSeedItem(uint _Id){
         uint temp1 = uint(keccak256(abi.encodePacked(_ItemList[msg.sender][_Id].itemName)));
         uint temp2 = uint(keccak256(abi.encodePacked("seed")));
         require(temp1 == temp2, "not a seed item");
@@ -55,7 +55,7 @@ contract OwnerItem is SproutOwnership {
         addSeedItem(num, dna1, dna2, dna1, dna2);
     }
     // The seed Items could be used to plant a new sprout at (x_id, y_id)
-    function UseSeedItem(uint x_id, uint y_id, uint _Id) public isValidItem(_Id) isSeed( _Id){
+    function UseSeedItem(uint x_id, uint y_id, uint _Id) public isValidItem(_Id) isSeedItem( _Id){
         uint rand_m = uint(keccak256(abi.encodePacked(block.timestamp, block.difficulty)));
         uint rand_f = uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp)));
         uint dna1 = rand_m & (_ItemList[msg.sender][_Id].content[0]);
@@ -95,18 +95,25 @@ contract OwnerItem is SproutOwnership {
 
 
     // private function
-    function addSeedItem(uint num, uint DNAm1, uint DNAm2, uint DNAf1, uint DNAf2) internal {
-        uint[4] memory dnas = [DNAm1, DNAm2, DNAf1, DNAf2];
-        Item memory item = Item("seed", num, dnas, true);
+    // add all kinds of Item in general
+    function addItem(string memory itemName, uint num, uint[4] memory content) internal {
+        Item memory item = Item(itemName, num, content, true);
         uint Id = _ItemList[msg.sender].push(item) - 1;
 
         emit OnItemAdded(Id);
     }
+    // add only seed item
+    function addSeedItem(uint num, uint DNAm1, uint DNAm2, uint DNAf1, uint DNAf2) internal {
+        uint[4] memory dnas = [DNAm1, DNAm2, DNAf1, DNAf2];
+        addItem("seed", num, dnas);
+    }
+    //remove some number of the Item
     function spendItem(uint _Id, uint num) internal isValidItem(_Id){
         require(num <= getItemNum(_Id), "not enough item");
-        if (num == getItemNum(_Id)){deleteItem(_Id)}
+        if (num == getItemNum(_Id)){deleteItem(_Id);}
         else{_ItemList[msg.sender][_Id].num -= num;}
     }
+    // remove the whole Item
     function deleteItem(uint _Id) internal isValidItem(_Id) {
         _ItemList[msg.sender][_Id].isValid = false;
 
