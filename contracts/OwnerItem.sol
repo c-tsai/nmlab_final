@@ -47,7 +47,7 @@ contract OwnerItem is SproutOwnership {
         emit OnRegister(new_player);
     }
     //when you plug the seeds from a beanstalk, it's immediately add to your item list
-    function PlugSeed(uint x_id, uint y_id) public SeedExist(x_id, y_id){
+    function PlugSeed(uint x_id, uint y_id) public SeedExist(x_id, y_id) SproutExist(uint x_id, uint y_id){
         sprout_list[msg.sender][x_id][y_id].seed_plug = true;
         uint dna1 = sprout_list[msg.sender][x_id][y_id].dna1;
         uint dna2 = sprout_list[msg.sender][x_id][y_id].dna2;
@@ -69,7 +69,7 @@ contract OwnerItem is SproutOwnership {
     function isItemValid(uint _Id) public view returns(bool isValid) {
         return _ItemList[msg.sender][_Id].isValid;
     }
-    function getItemNum(uint _Id) public view returns(uint) {
+    function getItemNum(uint _Id) public view isValidItem(_Id) returns(uint) {
         return _ItemList[msg.sender][_Id].num;
     }
     function getItem(uint _Id) public view isValidItem(_Id) returns(string memory, uint) {

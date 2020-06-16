@@ -62,7 +62,7 @@ contract SproutMarket is OwnerItem {
 
     // a portion of the items in the player's item list put onto the market place waited for sail.
     // Be aware of that the items put on market list won't be able to put back to your own item list again.
-    function sellItem(uint id, uint num, uint value, string memory description) public {
+    function sellItem(uint id, uint num, uint value, string memory description) public isValidItem(id){
         require(num <= getItemNum(id), "not enough item");
         Product memory product = Product(_ItemList[msg.sender][id].itemName, description, value, num, 
             _ItemList[msg.sender][id].content, msg.sender, true);
