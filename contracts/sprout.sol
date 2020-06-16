@@ -34,6 +34,9 @@ About Growing:
     3. all the growing before full grown is linear
     4. after full grown, it use 5% of the full grown time to die off, all the other feature would remain same in this period
     5. The bean can only be planted at (x, y) where 0 <= x <5, 0 <= y < 5
+    6. You can start to have seed after 1.02 full grown time
+    7. you can pollen in 1 ~ 1.02 full grown time, the amount of pollen for all beanstalks are always 10
+    8. you can pollenize in 1.01 ~1.02 full grown time
 
 About price:
     1. plug a non-sprout stage bean stalk get $10
@@ -57,7 +60,7 @@ Updates:
     1. the getSproutLook function is substitute with getColor, getSproutHeight, getSproutWidth, getSproutPrice,
     getSeedYellow, getSeedRound. Each of these functions is a view public function, which must be workable in 
     without using Event feature.
-    2. The cost of the randomAdd is $50
+    2. The cost of the randomAdd is $300
 
     
 */
@@ -78,8 +81,10 @@ contract Sprout is Ownable {
     uint dna2;
     uint planttime;
     uint readytime;//ready to replant
+    uint[] pollen;
     bool isset;
     bool seed_plug;
+    bool pollen_plug;
     gene g;
   }
   // could be derived from dna1 and dna2
@@ -104,14 +109,29 @@ contract Sprout is Ownable {
     _;
   }
   modifier EnoughBuySeed(){
-    require(balance[msg.sender]> 100, "not enough money to buy random seed");
+    require(balance[msg.sender]> 300, "not enough money to buy random seed");
     _;
   }
   modifier SeedExist(uint x_id, uint y_id){
     uint now_stage = now.sub(getPlantTime(x_id, y_id));
     uint fullgrown_time = getFullGrownTime(x_id, y_id);
-    require(now_stage > fullgrown_time.mul(101).div(100), "too early to have seeds");
+    require(now_stage > fullgrown_time.mul(102).div(100), "too early to have seeds");
     require(!sprout_list[msg.sender][x_id][y_id].seed_plug, "the seeds are already plugged.");
+    _;
+  }
+  modifier PollenExist(uint x_id, uint y_id){
+    uint now_stage = now.sub(getPlantTime(x_id, y_id));
+    uint fullgrown_time = getFullGrownTime(x_id, y_id);
+    require(now_stage > fullgrown_time, "too early to have pollen");
+    require(now_stage < fullgrown_time.mul(102).div(100), "too late to have pollen");
+    require(!sprout_list[msg.sender][x_id][y_id].pollen_plug, "the pollen are already plugged.");
+    _;
+  }
+  modifier PollenizeReady(uint x_id, uint y_id){
+    uint now_stage = now.sub(getPlantTime(x_id, y_id));
+    uint fullgrown_time = getFullGrownTime(x_id, y_id);
+    require(now_stage > fullgrown_time.mul(101).div(100), "too early to have pollen");
+    require(now_stage < fullgrown_time.mul(102).div(100), "too late to have pollen");
     _;
   }
 
@@ -245,7 +265,7 @@ contract Sprout is Ownable {
     }
     g.fullgrown_time = ((380-(speed_gen.mul(3).div(2)))/190)* 1 days;
 
-    sprout_list[msg.sender][x_id][y_id] = sprout(dna1, dna2, now, 0, true, false, g);
+    sprout_list[msg.sender][x_id][y_id] = sprout(dna1, dna2, now, 0, new uint[](0), true, false, false, g);
     emit OnAdd(x_id, y_id, dna1, dna2);
   }
   

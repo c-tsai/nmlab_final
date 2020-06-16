@@ -16,7 +16,7 @@ contract SproutMarket is OwnerItem {
         string description;
         uint value_each;
         uint num;
-        uint[4] content;// 4 is for seed product, may be expanded
+        uint[] content;
         address owner;
         bool isValid;
     }
