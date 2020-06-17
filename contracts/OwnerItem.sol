@@ -1,7 +1,7 @@
 pragma solidity ^0.5.0;
 
 
-import "./token.sol";
+import "./sproutownership.sol";
 
 contract OwnerItem is SproutOwnership {
 
