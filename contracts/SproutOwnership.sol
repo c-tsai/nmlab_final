@@ -1,8 +1,8 @@
 pragma solidity ^0.5.0;
 
-import "./erc20.sol";
-import "./safemath.sol";
-import "./sprout.sol";
+import "./ERC20.sol";
+import "./SafeMath.sol";
+import "./Sprout.sol";
 
 contract SproutOwnership is Sprout, ERC20 {
 
