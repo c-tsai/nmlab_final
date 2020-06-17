@@ -1,7 +1,7 @@
 pragma solidity ^0.5.0;
 
-import "./ownable.sol";
-import "./safemath.sol";
+import "./Ownable.sol";
+import "./SafeMath.sol";
 
 /*I design the DNA to have two strains(dna1, dna2 uint256), 
     The following is the representative of each gene (in LSB order)
