@@ -4,8 +4,9 @@ class Sprout extends Component {
     constructor(props){
         super(props);
         this.handleAddPlug = this.handleAddPlug.bind(this);
-        this.handleTransferPika = this.handleTransferPika.bind(this);
-        this.handleTransferBa = this.handleTransferBa.bind(this);
+        this.handleAppendItem = this.handleAppendItem.bind(this);
+        this.handleGetPollen= this.handleGetPollen.bind(this);
+        this.handlePollination = this.handlePollination.bind(this);
         this.state = {
             id: this.props.id,
             value: this.props.value,
@@ -24,13 +25,16 @@ class Sprout extends Component {
             this.props.plugSprout(this.state.id);
             this.setState({value: 0})
         }
-        
     };
-    handleTransferPika(){
-        this.props.TransferPika(this.state.id);
+    handleGetPollen(){
+        this.props.GetPollen(this.state.id);
     }
-    handleTransferBa(){
-        this.props.TransferBa(this.state.id);
+    
+    handleAppendItem(){
+        this.props.AppendItem(this.state.id);
+    }
+    handlePollination(){
+        this.props.Pollination(this.state.id);
     }
     render() {
         var icon;
@@ -142,10 +146,13 @@ class Sprout extends Component {
                                 <center><p>Price: {this.state.sprout.price}</p></center>
                             </div>
                             <div class="content">
-                               <center><button id="transferbox" onClick={this.handleTransferPika} class="ts button info">To Pika</button></center>
+                               <center><button id="transferbox" onClick={this.handleAppendItem} class="ts button info">Collect</button></center>
                             </div>
                             <div class="content">
-                               <center><button id="transferbox" onClick={this.handleTransferBa} class="ts button info">To Ba</button></center>
+                               <center><button id="transferbox" onClick={this.handleGetPollen} class="ts button info">Pollen</button></center>
+                            </div>
+                            <div class="content">
+                               <center><button id="transferbox" onClick={this.handlePollination} class="ts button info">Pollination</button></center>
                             </div>
                         </details>
                         

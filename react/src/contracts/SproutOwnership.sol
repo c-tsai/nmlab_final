@@ -1,17 +1,19 @@
 pragma solidity ^0.5.0;
 
-import "./erc20.sol";
-import "./safemath.sol";
+import "./ERC20.sol";
+import "./SafeMath.sol";
 import "./sprout.sol";
 
 contract SproutOwnership is Sprout, ERC20 {
 
   using SafeMath for uint256;
 
+  //mapping to show who is allow to use who's token
   mapping (address => mapping (address => uint256)) private _allowances;
 
-  uint256 private _totalSupply = 0;
+  uint256 private _totalSupply = 0; // the total tokens being transferred
 
+//basic functions for ERC20
   function _transfer(address sender, address recipient, uint256 amount) internal {
     require(sender != address(0), "ERC20: transfer from the zero address");
     require(recipient != address(0), "ERC20: transfer to the zero address");
