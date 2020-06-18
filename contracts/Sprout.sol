@@ -167,7 +167,7 @@ contract Sprout is Ownable {
     return sprout_list[msg.sender][x_id][y_id].g.seed_round;
   }
   function getSeedYellow(uint x_id, uint y_id) public view SproutExist(x_id, y_id) returns(bool){
-    return sprout_list[msg.sender][x_id][y_id].g.seed_round;
+    return sprout_list[msg.sender][x_id][y_id].g.seed_yellow;
   }
   function getColor(uint x_id, uint y_id) public view SproutExist(x_id, y_id) returns(uint){
     return sprout_list[msg.sender][x_id][y_id].g.color;
