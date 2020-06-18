@@ -269,12 +269,12 @@ contract Sprout is Ownable {
     emit OnAdd(x_id, y_id, dna1, dna2);
   }
   
-  // plant a sprout with random dna  cost $100
+  // plant a sprout with random dna  cost $300
   function randomAddSprout(uint x_id, uint y_id) public EnoughBuySeed(){
     uint dna1 = uint(keccak256(abi.encodePacked(block.timestamp, block.difficulty)));
     uint dna2 = uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp)));
     addSprout(x_id, y_id, dna1, dna2);
-    balance[msg.sender] = balance[msg.sender].sub(100);
+    balance[msg.sender] = balance[msg.sender].sub(300);
   }
     
   function plugSprout(uint x_id, uint y_id) public SproutExist(x_id, y_id){
