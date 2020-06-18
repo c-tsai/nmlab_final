@@ -10,7 +10,7 @@ import "./SafeMath.sol";
         2~40 -> whole color (from pale yellow to dark green) [polygenic trait]
         41~100 ->  stem width [polygenic trait]
         101~160 ->  stem height [polygenic trait]
-        161~200 -> peoductivity, the amount of generated seed [polygenetic trait]
+        161~200 -> productivity, the amount of generated seed [polygenetic trait]
         201~256 ->  grow speed [polygenic trait]
 
         *mendilan trait: 
