@@ -1,11 +1,10 @@
 pragma solidity ^0.5.0;
 
-import "./ERC20.sol";
 import "./SafeMath.sol";
-import "./Sprout.sol";
 
-contract SproutOwnership is Sprout, ERC20 {
-
+contract SproutOwnership {
+  event Transfer(address indexed _from, address indexed _to, uint256 _value);
+  event Approval(address indexed _owner, address indexed _spender, uint256 _value);
   using SafeMath for uint256;
 
   //mapping to show who is allow to use who's token
