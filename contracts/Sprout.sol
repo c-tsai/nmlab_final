@@ -178,7 +178,7 @@ contract Sprout is Ownable {
       uint height_gen =  getHeightGene(x_id, y_id);
       if(now_stage > fullgrown_time) {
         if((now_stage.sub(fullgrown_time)) < fullgrown_time.div(20)) {//before death
-          return (height_gen.add(60));
+          return (height_gen.add(120)).mul(60).div(120);
         } else{ return 0;} 
       }else{
         if(now_stage==0){ return 0;
