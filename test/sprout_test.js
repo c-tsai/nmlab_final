@@ -1,13 +1,16 @@
-const S = artifacts.require("OwnerItem");
+const OwnerItem = artifacts.require("OwnerItem");
+const SproutOwnership = artifacts.require("SproutOwnership");
+
 
 contract("OwnerItem", accounts => {
   it("Owner testing", () => 
-    S.deployed()
-        .then(register => register.Register())
-        .then(instance => instance.randomAddSprout(0,0))
-	.then(res => res.balanceOf.call(account[0]))
+    OwnerItem.deployed()
+        .then(register => register.Register("0x1c9576b3c7F3D5577d1Ff71212B2b45862e1BBd9"))
+        //.then(instance => instance.plugSprout(0,0))
+        //.then(res => SproutOwnership(res).balanceOf.call("0x1c9576b3c7F3D5577d1Ff71212B2b45862e1BBd9"))
+        .then(instance => instance.balanceOf("0x1c9576b3c7F3D5577d1Ff71212B2b45862e1BBd9"))
         .then(balance => {
-        assert.equal(balance.valueOf(), 50, 'account 0 balance is wrong');
+        assert.equal(balance.valueOf(), 0, 'account 0 balance is wrong');
     }));
 });
 /*  it("should assert ", function() {
