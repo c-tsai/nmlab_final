@@ -309,7 +309,7 @@ contract Sprout is Ownable {
   }
 
   // when a player enter the game, he or she should be registered by the contract owner (us) first
-    function Register(address new_player) public onlyOwner(){
+  function Register(address new_player) public onlyOwner(){
         balance[new_player] = 1000;
         emit OnRegister(new_player);
     }
