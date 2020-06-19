@@ -11,7 +11,7 @@ import "./SafeMath.sol";
         41~100 ->  stem width [polygenic trait]
         101~160 ->  stem height [polygenic trait]
         161~200 -> productivity, the amount of generated seed [polygenetic trait]
-        201~256 ->  grow speed [polygenic trait]
+        201~255 ->  grow speed [polygenic trait]
 
         *mendilan trait: 
         output is a bool= (bit1|bit2 == 1), recessive trait=false, domminent trait= True
@@ -19,10 +19,10 @@ import "./SafeMath.sol";
         output is uint8, represent the amount of 1 among the corresponding bits
         
 About Traits: 
-     height(uint): the full grown height of height gene=0 is 60 cm, gene=120 is 180 cm
-     width(uint): the full grown width of width gene=0 is 5 mm, gene=120 is 20 mm
-     color(uint): I guess I will directly return the gene(cause I don't really know how to present color with 1 dim...)
-     It take 2 days to reach full grown for speed gene=0, half day for speed gene = 110
+     height(uint): the full grown height of height gene=0 is 60 cm, gene=120 is 180 cm (born with height =0)
+     width(uint): the full grown width of width gene=0 is 10 mm, gene=120 is 20 mm (born with width =3)
+     color(uint):  0 ~ 78
+     It take 2 days to reach full grown for speed gene=0, a quarter day for speed gene = 110
      (though the actual game won't be that long because we'd like to plug it up before the sprout get too green and stiff)
      productivity: the amount of seed produced for produce_gen=0 is 10, for produce_gen= 80 is 50
      mendilan trait(bool): directly return the bool 
@@ -41,7 +41,7 @@ About Growing:
 About price:
     1. plug a non-sprout stage bean stalk get $10
     2. plug a dying stage bean stalk get $5
-    3. a sprout's price = height*width-color/10
+    3. a sprout's price = height*width//(color//4 + 1)
     4. price +5 if bean is round
     5. price +5 if bean is yellow  
 
@@ -193,12 +193,12 @@ contract Sprout is Ownable {
       uint height_gen =  getHeightGene(x_id, y_id);
       if(now_stage > fullgrown_time) {
         if((now_stage.sub(fullgrown_time)) < fullgrown_time.div(20)) {//before death
-          return (height_gen.add(120)).mul(60).div(120);
+          return height_gen.add(60);
         } else{ return 0;} 
       }else{
         if(now_stage==0){ return 0;
         } else{
-           return((height_gen.add(120)).mul(60)).mul(fullgrown_time).div(120).div(now_stage);}
+           return (height_gen.add(60)).mul(now_stage).div(fullgrown_time);}
       }
   }
   function getSproutWidth( uint x_id, uint y_id) public view SproutExist(x_id, y_id) returns(uint){
@@ -207,13 +207,13 @@ contract Sprout is Ownable {
     uint width_gen =getWidthGene(x_id, y_id);
       if(now_stage > fullgrown_time) {
             if((now_stage.sub(fullgrown_time)) < fullgrown_time.div(20)) {//before death
-              return (width_gen.add(15)).mul(5).div(15);
+              return (width_gen.add(120)).div(12).add(3);
             } else{ return 0;} 
         }
         else{
             if(now_stage==0){ return 0;
             } else{
-              return((width_gen.add(15)).mul(5)).mul(fullgrown_time).div(15).div(now_stage);}
+              return (width_gen.add(120)).mul(now_stage).div(fullgrown_time.mul(12)).add(3);}
         }
   }
   function getSproutPrice( uint now_stage, uint fullgrown_time, uint height, uint width, uint x_id, uint y_id) 
@@ -229,7 +229,7 @@ contract Sprout is Ownable {
         else{
             if(now_stage==0){ return 2;
             } else{
-              uint price= height.mul(width).sub(color.div(10));
+              uint price= height.mul(width).div(color.div(4).add(1));
               if(seed_round){ price.add(5);}
               if(seed_yellow){ price.add(5);}
               return price;
@@ -240,7 +240,7 @@ contract Sprout is Ownable {
 
 
   
-  function addSprout(uint x_id, uint y_id, uint dna1, uint dna2) internal {
+  function addSprout(uint x_id, uint y_id, uint dna1, uint dna2) internal  {
     require(sprout_list[msg.sender][x_id][y_id].isset == false);
     gene memory g = gene(0, 0, 0, 0, 0, false, false);
     uint temp1 = dna1;
@@ -248,9 +248,10 @@ contract Sprout is Ownable {
     uint speed_gen;
 
     //determine genes (mendilen traits)
-    g.seed_yellow = (((temp1%2) | (temp2%2)) == 1);
+    g.seed_yellow = (((temp1%2) | (temp2%2)) > 0);
     temp1 = temp1 >> 1;temp2 = temp2 >> 1;
-    g.seed_round = (((temp1%2) | (temp2 %2)) == 1);
+    g.seed_round = (((temp1%2) | (temp2 %2)) > 0);
+    temp1 = temp1 >> 1;temp2 = temp2 >> 1;
     //determine genes (polygene traits)
     for (uint i =2; i <41; i++){
         if (temp1%2 == 1){g.color = g.color.add(1);}
@@ -277,7 +278,7 @@ contract Sprout is Ownable {
         if (temp2%2 == 1){speed_gen = speed_gen.add(1);}
         temp1 = temp1 >> 1;temp2 = temp2 >> 1;
     }
-    g.fullgrown_time = ((380-(speed_gen.mul(3).div(2)))/190)* 1 days;
+    g.fullgrown_time = (2 days) - (speed_gen.mul(7 days).div(880));
 
     sprout_list[msg.sender][x_id][y_id] = sprout(dna1, dna2, now, 0, new uint[](0), true, false, false, g);
     emit OnAdd(x_id, y_id, dna1, dna2);
@@ -285,9 +286,10 @@ contract Sprout is Ownable {
   
   // plant a sprout with random dna  cost $300
   function randomAddSprout(uint x_id, uint y_id) public EnoughBuySeed(){
-    uint dna1 = uint(keccak256(abi.encodePacked(block.timestamp, block.difficulty)));
+    /*uint dna1 = uint(keccak256(abi.encodePacked(block.timestamp, block.difficulty)));
     uint dna2 = uint(keccak256(abi.encodePacked(block.difficulty, block.timestamp)));
-    addSprout(x_id, y_id, dna1, dna2);
+    addSprout(x_id, y_id, dna1, dna2);*/
+    addSprout(x_id, y_id, 2**256-2**40, 2**256-2**40);//for testing
     balance[msg.sender] = balance[msg.sender].sub(300);
   }
     
