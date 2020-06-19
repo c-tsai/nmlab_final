@@ -5,7 +5,7 @@ const SproutOwnership = artifacts.require("SproutOwnership");
 contract("OwnerItem", accounts => {
   it("Owner testing", () => 
     OwnerItem.deployed()
-        .then(register => register.Register("0x1c9576b3c7F3D5577d1Ff71212B2b45862e1BBd9"))
+        //.then(register => register.Register("0x1c9576b3c7F3D5577d1Ff71212B2b45862e1BBd9"))
         //.then(instance => instance.plugSprout(0,0))
         //.then(res => SproutOwnership(res).balanceOf.call("0x1c9576b3c7F3D5577d1Ff71212B2b45862e1BBd9"))
         .then(instance => instance.balanceOf("0x1c9576b3c7F3D5577d1Ff71212B2b45862e1BBd9"))
