@@ -1,23 +1,26 @@
 import React, {Component} from 'react';
-
+import SeedItemData from './seeditemdata';
+var seeditems = []; //local seed item initialized by seeditem_data
 class Sprout extends Component {
     constructor(props){
         super(props);
         this.handleAddPlug = this.handleAddPlug.bind(this);
-        this.handleAppendItem = this.handleAppendItem.bind(this);
+        this.handleGetSeed= this.handleGetSeed.bind(this);
         this.handleGetPollen= this.handleGetPollen.bind(this);
+        this.handlePlantSeed = this.handlePlantSeed.bind(this);
         this.handlePollination = this.handlePollination.bind(this);
         this.state = {
-            id: this.props.id,
-            value: this.props.value,
-            sprout: this.props.sprout, 
-            trasferto: ''
+            id: this.props.sprout.id,
+            value: this.props.sprout.value,
+            sprout: this.props.sprout,
+            seeditems: seeditems
         };
         
     }
-
+    
     handleAddPlug(){
-        if(this.state.value==0){
+        console.log('sprout.jsx handle add plug', this.state.sprout.value)
+        if(this.state.sprout.value==0){
             this.props.addSprout(this.state.id);
             this.setState({value: 1});
         }
@@ -30,8 +33,11 @@ class Sprout extends Component {
         this.props.GetPollen(this.state.id);
     }
     
-    handleAppendItem(){
-        this.props.AppendItem(this.state.id);
+    handleGetSeed(){
+        this.props.GetSeed(this.state.id);
+    }
+    handlePlantSeed(){
+        this.props.PlantSeed(this.state.id);
     }
     handlePollination(){
         this.props.Pollination(this.state.id);
@@ -113,7 +119,7 @@ class Sprout extends Component {
                 icon = namearr.join("");
             }
             else if(this.state.sprout.height>96 && this.state.sprout.height<120){
-                var namearr = ['./img/stage3/', this.state.sprout.color];
+                var namearr = ['./img/stage4/', this.state.sprout.color];
                 if(this.state.sprout.width<=5){
                     namearr.push('_w1.png');
                 }else if(this.state.sprout.width>5 && this.state.width<=13){
@@ -125,6 +131,11 @@ class Sprout extends Component {
             }
         }
         
+        const listItems = this.props.seeditem_data.map((d) => 
+        <button id="transferbox" class="ts button info" key={d.time}>P({d.x_id},{d.y_id}): {d.number}</button>
+        );
+        console.log(this.props.seeditem_data)
+        console.log(listItems);
         return (      
             
             <div class="three wide column segmented">
@@ -146,13 +157,21 @@ class Sprout extends Component {
                                 <center><p>Price: {this.state.sprout.price}</p></center>
                             </div>
                             <div class="content">
-                               <center><button id="transferbox" onClick={this.handleAppendItem} class="ts button info">Collect</button></center>
+                               <center><button id="transferbox" onClick={this.handleGetSeed} class="ts button info">Get Seed</button></center>
                             </div>
                             <div class="content">
-                               <center><button id="transferbox" onClick={this.handleGetPollen} class="ts button info">Pollen</button></center>
+                               <center><button id="transferbox" onClick={this.handleGetPollen} class="ts button info">Get Pollen</button></center>
                             </div>
                             <div class="content">
                                <center><button id="transferbox" onClick={this.handlePollination} class="ts button info">Pollination</button></center>
+                            </div>
+                            <div class="content">
+                                <details>
+                                <summary>
+                                <i class="dropdown icon"></i> Plant Seed
+                                </summary>
+                                <div id="plantseedbox">{listItems}</div>
+                                </details>
                             </div>
                         </details>
                         

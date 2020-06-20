@@ -4,7 +4,7 @@ class SeedItem extends Component {
     constructor(props){
         super(props);
         this.state = {
-            price: 0
+            seednum: this.props.seednum
         }
         this.handleSellSeed = this.handleSellSeed.bind(this);
     }
@@ -38,9 +38,10 @@ class SeedItem extends Component {
                
             }
         }
-        console.log(seedicon)
+        var x_id = this.props.sprout.id%5;
+        var y_id = (this.props.sprout.id-x_id)/5;
         return(
-            <div class="ts secondary segment">
+            <div id="shopitem" class="ts secondary segment">
                 <div class="item">
                     <div class="content">
                         <div>
@@ -50,15 +51,10 @@ class SeedItem extends Component {
                 </div>
                 <div class="item">
                     <div class="content">
-                        <div class="ts header">Price: {price}</div>
+                        <div class="ts header">P({x_id}, {y_id}): {this.state.seednum}</div>
                     </div>
                 </div>
                 
-                <div class="item">
-                    <div class="content">
-                        <center><button class="ts button info" onClick={this.handleSellSeed}>Sell</button></center>
-                    </div>
-                </div>
             </div>
         )
     }

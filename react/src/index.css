@@ -75,3 +75,7 @@
   font-size: 20px;
   margin: 10px;
 }
+
+.swal-wide{
+  width:900px !important;
+}
