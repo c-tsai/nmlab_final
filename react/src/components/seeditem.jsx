@@ -16,26 +16,17 @@ class SeedItem extends Component {
         var seedicon;
         var price=this.props.sprout.price;
         if(this.props.sprout.seed_yg==0){//yellow seed
-            console.log('line 17')
             if(this.props.sprout.seed_rw==0){//round
-                console.log('line 18')
                 seedicon = './img/stage0/0_r.png';
                 
             }else{
-                console.log('line 22')
                 seedicon = './img/stage0/0_w.png';
-                
             }
         }else{
-            console.log('line 26')
             if(this.props.sprout.seed_rw==0){
-                console.log('line 28')
                 seedicon = './img/stage0/1_r.png';
-               
             }else {
-                console.log('line 31')
                 seedicon = './img/stage0/1_w.png';
-               
             }
         }
         var x_id = this.props.sprout.id%5;
@@ -51,7 +42,7 @@ class SeedItem extends Component {
                 </div>
                 <div class="item">
                     <div class="content">
-                        <div class="ts header">P({x_id}, {y_id}): {this.state.seednum}</div>
+                        <div class="ts header"><center>P({this.props.seeditemdata.x_id}, {this.props.seeditemdata.y_id})</center></div>
                     </div>
                 </div>
                 

@@ -27,31 +27,31 @@ import './index.css';
 
 const MySwal = withReactContent(Swal)
 var sprouts = [
-  {id: 0, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 1, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 2, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 3, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 4, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 5, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 6, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 7, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 8, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 9, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 10, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 11, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 12, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 13, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 14, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 15, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 16, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 17, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 18, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 19, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 20, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 21, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 22, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 23, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0},
-  {id: 24, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0}
+  {id: 0, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 1, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 2, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 3, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 4, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 5, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 6, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 7, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 8, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 9, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 10, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 11, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 12, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 13, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 14, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 15, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 16, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 17, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 18, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 19, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 20, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 21, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 22, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 23, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0},
+  {id: 24, value:0, seed_yg: 0, seed_rw: 0, color: 0, height: 0, width: 0, price: 0, hasseed: 0, haspollen: 0}
 ]
 var users = [
   {username:'Pika' , userbalance: 20000},
@@ -110,7 +110,6 @@ class SproutApp extends React.Component {
     this.plugSprout = this.plugSprout.bind(this);
     this.handlePurchase = this.handlePurchase.bind(this);
     this.GetSeed = this.GetSeed.bind(this);
-    this.SellSeed = this.SellSeed.bind(this);
     this.GetPollen = this.GetPollen.bind(this);
     this.PlantSeed = this.PlantSeed.bind(this);
     this.Pollination = this.Pollination.bind(this);
@@ -166,10 +165,9 @@ class SproutApp extends React.Component {
       x_id = sproutid%5;
       y_id = (sproutid-x_id)/5;
       console.log(x_id, y_id);
-      var res = this.state.contract1.methods.randomAddSprout(x_id, y_id).send({from: this.state.accounts[0], gasPrice: '500000000'})
-      .then(function(receipt){
-        console.log(receipt)
-      });
+      this.state.contract1.methods.randomAddSprout(x_id, y_id).send({from: this.state.accounts[0]});
+      
+      
       /*
       this.state.contract1.methods.randomAddSprout(x_id, y_id).estimateGas({gas: 5000000}, function(error, gasAmount){
         if(gasAmount == 5000000)
@@ -207,12 +205,35 @@ class SproutApp extends React.Component {
     console.log('On transfer')
     console.log(sproutid)
   }
-  PlantSeed(sproutid) {
-    if(this.state.seeditem_data.length<=0){
-      MySwal.fire(`No seed to plant`)
+  PlantSeed(sproutid, seeddata) {
+    if(this.state.sprouts[sproutid].value==1){
+      MySwal.fire(`Can't plant here`)
     }
     else{
       //choose seed
+      console.log('Plant seed')
+      console.log(seeddata.sprout)
+      //switch image
+      let sprouttmp = Object.assign({}, this.state.sprouts);
+      sprouttmp[sproutid].value = 1;
+      sprouttmp[sproutid].seed_yg = seeddata.sprout.seed_yg;
+      sprouttmp[sproutid].seed_rw = seeddata.sprout.seed_rw;
+      sprouttmp[sproutid].color = seeddata.sprout.color;
+      sprouttmp[sproutid].width = 0;
+      sprouttmp[sproutid].height = 0;
+      sprouttmp[sproutid].price = 200;
+      this.setState({sprouts: sprouttmp});
+      //delete the seed
+      
+      
+      const isseed= (element) => element.time == seeddata.time;
+      var ind = this.state.seeditem_data.findIndex(isseed);
+      var tmp = Object.assign({}, this.state.seeditem_data);
+      console.log(ind)
+      tmp[ind].number = tmp[ind].number-1;
+      console.log(this.state.seeditem_data)
+      //tmp[seeddata.id].number = tmp[seeddata.id].number-1;
+      //this.setState({seeditem_data: tmp});
     }
   }
   GetSeed(sproutid){
@@ -225,13 +246,16 @@ class SproutApp extends React.Component {
     
     if(this.state.sprouts[sproutid].hasseed==0){
       console.log('no seed');
+      MySwal.fire(`No seed here`)
     }
     else{
       console.log('has seed');
-      this.state.seeditems.push(<SeedItem key={this.state.seeditemnum} id={sproutid} sprout={this.state.sprouts[sproutid]} seednum={seednum} />);
       var gettime = Date.now();
-      var seedobject = {id: sproutid, x_id: x_id, y_id: y_id, number: seednum, time: gettime};
+      var seedobject = {id: sproutid, x_id: x_id, y_id: y_id, number: seednum, time: gettime, sprout: this.state.sprouts[sproutid]};
       this.state.seeditem_data.push(seedobject);
+      this.state.seeditems.push(<SeedItem key={this.state.seeditemnum} id={sproutid} sprout={this.state.sprouts[sproutid]} seednum={seednum} seeditemdata={this.state.seeditem_data[this.state.seeditem_data.length-1]}/>);
+      
+      
       console.log(this.state.seeditem_data)
       this.setState({
         seeditemnum: this.state.seeditemnum + 1,
@@ -243,18 +267,23 @@ class SproutApp extends React.Component {
   
 
   GetPollen(sproutid){
-    var x_id;
-    var y_id;
-    x_id = sproutid%5;
-    y_id = (sproutid-x_id)/5;
-    //pollenitems.push(<PollenItem key={sproutid} x_id={x_id} y_id={y_id} />);
-    //pollenitem_buttons.push(<PollenItemButton key={sproutid} id={this.state.pollennum} x_id={x_id} y_id={y_id} ChoosePollen={this.ChoosePollen} />);
-    var tmp = Object.assign({}, this.state.pollenitems);
-    tmp[sproutid].amount = tmp[sproutid].amount+10;
-    this.setState({
-      pollennum: this.state.pollennum+1,
-      pollenitems: tmp
-    })
+    if(this.state.sprouts[sproutid].haspollen==0){
+      MySwal.fire(`No pollen here`);
+    }
+    else{
+      var x_id;
+      var y_id;
+      x_id = sproutid%5;
+      y_id = (sproutid-x_id)/5;
+      //pollenitems.push(<PollenItem key={sproutid} x_id={x_id} y_id={y_id} />);
+      //pollenitem_buttons.push(<PollenItemButton key={sproutid} id={this.state.pollennum} x_id={x_id} y_id={y_id} ChoosePollen={this.ChoosePollen} />);
+      var tmp = Object.assign({}, this.state.pollenitems);
+      tmp[sproutid].amount = tmp[sproutid].amount+10;
+      this.setState({
+        pollennum: this.state.pollennum+1,
+        pollenitems: tmp
+      })
+    }
   }
   
   async Pollination(sproutid){

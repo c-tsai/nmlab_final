@@ -79,3 +79,10 @@
 .swal-wide{
   width:900px !important;
 }
+
+#selectseedbox{
+  width: 92px;
+}
+#plantseedbox {
+  width:130px; 
+}

@@ -36,8 +36,9 @@ class Sprout extends Component {
     handleGetSeed(){
         this.props.GetSeed(this.state.id);
     }
-    handlePlantSeed(){
-        this.props.PlantSeed(this.state.id);
+    handlePlantSeed(d){
+        console.log(d)
+        this.props.PlantSeed(this.state.id, d);
     }
     handlePollination(){
         this.props.Pollination(this.state.id);
@@ -132,10 +133,10 @@ class Sprout extends Component {
         }
         
         const listItems = this.props.seeditem_data.map((d) => 
-        <button id="transferbox" class="ts button info" key={d.time}>P({d.x_id},{d.y_id}): {d.number}</button>
+        <div class="content">
+            <button onClick={() => this.handlePlantSeed(d)} id="selectseedbox" class="ts button info" key={d.time}><center>P({d.x_id},{d.y_id}): {d.number}</center></button>
+        </div>
         );
-        console.log(this.props.seeditem_data)
-        console.log(listItems);
         return (      
             
             <div class="three wide column segmented">
@@ -170,7 +171,7 @@ class Sprout extends Component {
                                 <summary>
                                 <i class="dropdown icon"></i> Plant Seed
                                 </summary>
-                                <div id="plantseedbox">{listItems}</div>
+                                <div id="plantseedbox scrollspySegment" class="ts segment">{listItems}</div>
                                 </details>
                             </div>
                         </details>
