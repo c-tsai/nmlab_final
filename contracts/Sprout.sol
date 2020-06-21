@@ -86,10 +86,9 @@ contract Sprout is Ownable {
     bool isset;
     bool seed_plug;
     bool pollen_plug;
-    gene g;
   }
   // could be derived from dna1 and dna2
-  struct gene {
+  /*struct gene {
     uint height_gen;
     uint width_gen;
     uint color;
@@ -97,7 +96,7 @@ contract Sprout is Ownable {
     uint produce_gen;
     bool seed_yellow;
     bool seed_round;
-  }
+  }*/
   struct Item {
         string itemName;
         uint num;
@@ -163,29 +162,65 @@ contract Sprout is Ownable {
 
 //get TRAITS
   function getFullGrownTime(uint x_id, uint y_id) internal view returns(uint){
-    return sprout_list[msg.sender][x_id][y_id].g.fullgrown_time;
+    uint point = 2**201;
+    uint speed_gen = 0;
+    for (uint i =201; i <256; i++){
+        if (((sprout_list[msg.sender][x_id][y_id].dna1) & point) == point){speed_gen = speed_gen.add(1);}
+        if (((sprout_list[msg.sender][x_id][y_id].dna2) & point) == point){speed_gen = speed_gen.add(1);}
+        point = point >> 1;
+    }
+    return (2 days) - (speed_gen.mul(7 days).div(880));
   }
   function getPlantTime(uint x_id,  uint y_id) internal view returns(uint){
     return sprout_list[msg.sender][x_id][y_id].planttime;
   }
   function getHeightGene(uint x_id, uint y_id) internal view returns(uint){
-    return sprout_list[msg.sender][x_id][y_id].g.height_gen;
+    uint point = 2**101;
+    uint height_gen = 0;
+    for (uint i =101; i <161; i++){
+        if (((sprout_list[msg.sender][x_id][y_id].dna1) & point) == point){height_gen = height_gen.add(1);}
+        if (((sprout_list[msg.sender][x_id][y_id].dna2) & point) == point){height_gen = height_gen.add(1);}
+        point = point >> 1;
+    }
+    return height_gen;
   }
   function getWidthGene(uint x_id, uint y_id) internal view returns(uint){
-    return sprout_list[msg.sender][x_id][y_id].g.width_gen;
+    uint point = 2**41;
+    uint width_gen = 0;
+    for (uint i =41; i <101; i++){
+        if (((sprout_list[msg.sender][x_id][y_id].dna1) & point) == point){width_gen = width_gen.add(1);}
+        if (((sprout_list[msg.sender][x_id][y_id].dna2) & point) == point){width_gen = width_gen.add(1);}
+        point = point >> 1;
+    }
+    return width_gen;
   }
   // The following traits could be seen from the players
   function getProduceGene(uint x_id, uint y_id) public view SproutExist(x_id, y_id) returns(uint){
-    return sprout_list[msg.sender][x_id][y_id].g.produce_gen;
+    uint point = 2**161;
+    uint produce_gen = 0;
+    for (uint i =161; i <201; i++){
+        if (((sprout_list[msg.sender][x_id][y_id].dna1) & point) == point){produce_gen = produce_gen.add(1);}
+        if (((sprout_list[msg.sender][x_id][y_id].dna2) & point) == point){produce_gen = produce_gen.add(1);}
+        point = point >> 1;
+    }
+    return produce_gen;
   }
+
   function getSeedRound(uint x_id, uint y_id) public view SproutExist(x_id, y_id) returns(bool){
-    return sprout_list[msg.sender][x_id][y_id].g.seed_round;
+    return (((sprout_list[msg.sender][x_id][y_id].dna1)&2== 2) || ((sprout_list[msg.sender][x_id][y_id].dna2)&2 == 2));
   }
   function getSeedYellow(uint x_id, uint y_id) public view SproutExist(x_id, y_id) returns(bool){
-    return sprout_list[msg.sender][x_id][y_id].g.seed_yellow;
+    return  (((sprout_list[msg.sender][x_id][y_id].dna1%2) | (sprout_list[msg.sender][x_id][y_id].dna2%2)) > 0);
   }
   function getColor(uint x_id, uint y_id) public view SproutExist(x_id, y_id) returns(uint){
-    return sprout_list[msg.sender][x_id][y_id].g.color;
+    uint point = 2**2;
+    uint color = 0;
+    for (uint i =2; i <41; i++){
+        if (((sprout_list[msg.sender][x_id][y_id].dna1) & point) == point){color = color.add(1);}
+        if (((sprout_list[msg.sender][x_id][y_id].dna2) & point) == point){color = color.add(1);}
+        point = point >> 1;
+    }
+    return color;
   }
   function getSproutHeight( uint x_id, uint y_id) public view SproutExist(x_id, y_id) returns(uint){
       uint now_stage = now.sub(getPlantTime(x_id, y_id));
@@ -241,46 +276,7 @@ contract Sprout is Ownable {
 
   
   function addSprout(uint x_id, uint y_id, uint dna1, uint dna2) internal  {
-    require(sprout_list[msg.sender][x_id][y_id].isset == false);
-    gene memory g = gene(0, 0, 0, 0, 0, false, false);
-    uint temp1 = dna1;
-    uint temp2 = dna2;
-    uint speed_gen;
-
-    //determine genes (mendilen traits)
-    g.seed_yellow = (((temp1%2) | (temp2%2)) > 0);
-    temp1 = temp1 >> 1;temp2 = temp2 >> 1;
-    g.seed_round = (((temp1%2) | (temp2 %2)) > 0);
-    temp1 = temp1 >> 1;temp2 = temp2 >> 1;
-    //determine genes (polygene traits)
-    for (uint i =2; i <41; i++){
-        if (temp1%2 == 1){g.color = g.color.add(1);}
-        if (temp2%2 == 1){g.color = g.color.add(1);}
-        temp1 = temp1 >> 1;temp2 = temp2 >> 1;
-    }
-    for (uint i =41; i <101; i++){
-        if (temp1%2 == 1){g.width_gen = g.width_gen.add(1);}
-        if (temp2%2 == 1){g.width_gen = g.width_gen.add(1);}
-        temp1 = temp1 >> 1;temp2 = temp2 >> 1;
-    }
-    for (uint i =101; i <161; i++){
-        if (temp1%2 == 1){g.height_gen = g.height_gen.add(1);}
-        if (temp2%2 == 1){g.height_gen = g.height_gen.add(1);}
-        temp1 = temp1 >> 1;temp2 = temp2 >> 1;
-    }
-    for (uint i =161; i <201; i++){
-        if (temp1%2 == 1){g.produce_gen = g.produce_gen.add(1);}
-        if (temp2%2 == 1){g.produce_gen = g.produce_gen.add(1);}
-        temp1 = temp1 >> 1;temp2 = temp2 >> 1;
-    }
-    for (uint i =201; i <256; i++){
-        if (temp1%2 == 1){speed_gen = speed_gen.add(1);}
-        if (temp2%2 == 1){speed_gen = speed_gen.add(1);}
-        temp1 = temp1 >> 1;temp2 = temp2 >> 1;
-    }
-    g.fullgrown_time = (2 days) - (speed_gen.mul(7 days).div(880));
-
-    sprout_list[msg.sender][x_id][y_id] = sprout(dna1, dna2, now, 0, new uint[](0), true, false, false, g);
+    sprout_list[msg.sender][x_id][y_id] = sprout(dna1, dna2, now, 0, new uint[](0), true, false, false);
     emit OnAdd(x_id, y_id, dna1, dna2);
   }
   
