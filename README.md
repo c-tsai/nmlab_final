@@ -1,34 +1,52 @@
 ## A. Environment
 ### OS: macOS 10.15.5
 
-## B. Prerequisite
+## B. Setting up the environment
+- NodeJS: v12.16.2
+    - Download it here: https://nodejs.org/en/download/
+- Truffle: v5.1.23
 ```
-NodeJS: v12.16.2
-Truffle: v5.1.23
-Ganache CLI: v6.9.1
-sweetalert2: v9.15.1
+$ npm install truffle
+```
+- Ganache CLI: v6.9.1
+```
+$ npm install ganache-li
+```
+- sweetalert2: v9.15.1
+```
+$ npm install sweetalert2
 ```
 ## C. How to start the program?
-### 1. Truffle compile (Directory: `src/`)
+### 1. Clone the project
+```
+$ git clone https://github.com/c-tsai/nmlab_final.git
+```
+- Check out final branch
+```
+$ git checkout final
+```
+
+### 2. Truffle compile (Directory: `src/`)
 ```
 $ truffle compile
 ```
-### 2. Start ganache-cli
+### 3. Start ganache-cli
 ```
 $ ganache-cli
 ```
+- Make sure the client is running on port:8545
 
-### 3. Truffle migrate (Director: `src/`)
+### 4. Truffle migrate (Director: `src/`)
 ```
 $ truffle migrate
 ```
 
-### 4. Start the program (Directory: `root dir`)
+### 5. Start the program (Directory: `root dir`)
 ```
 $ npm run start
 ```
 
-### 5. Open the webpage in Google Chrome
+### 6. Start Google Chrome
 - http://localhost:3000
 - Click on the button and you'll see the message in the console
 
