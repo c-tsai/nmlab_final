@@ -1,0 +1,69 @@
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+code {
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+/*For header.jsx*/
+#mynavbar {
+  margin: 10px;
+  height: 70px;
+}
+
+#main_container {
+  padding: 10px;
+}
+
+#white_font {
+  color: #FFFFFF;
+}
+
+#sproutheader {
+  font-size: 60px;
+  color: #FFFFFF;
+  margin: 25px;
+  font-weight: 500;
+}
+
+#colored_bar {
+  background-color: #79A8B9;
+  padding: 10px;
+  color: #FFFFFF;
+}
+/*For user.jsx*/
+#user {
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+}
+/*For sprout.jsx*/
+#actionbutton {
+  width: 122px;
+}
+
+#plantseedbox {
+  width: 130px;
+  padding: 5px;
+  margin: 7px;
+}
+
+#selectseedbox {
+  width: 109px;
+  margin: 5px;
+}
+
+/*for myitem*/
+#myitems {
+  margin-left: 20px;
+  margin-right: 20px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+}
