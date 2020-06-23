@@ -2,11 +2,12 @@
 ### OS: macOS 10.15.5
 
 ## B. Prerequisite
-### 1. NodeJS: v12.16.2
-### 2. Truffle: v5.1.23
-### 3. Ganache CLI: v6.9.1
-### 4. sweetalert2: v9.15.1
-
+```
+NodeJS: v12.16.2
+Truffle: v5.1.23
+Ganache CLI: v6.9.1
+sweetalert2: v9.15.1
+```
 ## C. How to start the program?
 ### 1. Truffle compile (Directory: `src/`)
 ```
