@@ -1,6 +1,7 @@
+# My Sprout Farm
+![Alt text](public/img/main.png?raw=true "Title")
 ## A. Environment
 ### OS: macOS 10.15.5
-
 ## B. Prerequisite
 ```
 NodeJS: v12.16.2
