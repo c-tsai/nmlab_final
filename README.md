@@ -49,7 +49,14 @@ $ npm run start
 ### 6. Start Google Chrome
 - http://localhost:3000
 - Click on the button and you'll see the message in the console
-
-## D. About the UI
+## D. How to play the game?
+- Click on any empty box to plant a seed with random DNA
+![Alt text](public/img/plantseed_init.png?raw=true "Title")
+- Collect seeds from existing sprouts and plant then elsewhere
+![Alt text](public/img/plantseed.png?raw=true "Title")
+- Collect pollen from existing sprouts and perform pollination to get seeds of different DNA!
+![Alt text](public/img/actions.png?raw=true "Title")
+![Alt text](public/img/choosepollen.png?raw=true "Title")
+## E. About the UI
 ### Stylesheet:https://tocas-ui.com
 
