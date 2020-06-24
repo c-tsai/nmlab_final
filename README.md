@@ -1,3 +1,5 @@
+# My Sprout Farm
+![Alt text](public/main.jpg?raw=true "Main")
 ## A. Environment
 ### OS: macOS 10.15.5
 
